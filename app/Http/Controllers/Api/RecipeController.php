@@ -61,7 +61,7 @@ class RecipeController extends Controller
     public function show($id)
     {
         if (!ctype_digit($id)) {
-            $response = new ApiResponse(false, 'Invalid ID provided');
+            $response = new ApiResponse(false, 'Invalid ID');
             return response()->json($response);
         }
 
@@ -141,7 +141,7 @@ class RecipeController extends Controller
             ->take(10)
             ->get();
 
-        $response = new ApiResponse(true, 'knowledge recipes', $recipes);
+        $response = new ApiResponse(true, 'cooking knowledge', $recipes);
         return response()->json($response);
     }
 
