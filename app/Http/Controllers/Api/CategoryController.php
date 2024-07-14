@@ -21,7 +21,7 @@ class CategoryController extends Controller
         //     ->where('type', $type)
         //     ->get();
         $categories = Category::orderBy("created_at", "desc")
-            ->select('id', 'name', DB::raw('"https://img.playbook.com/lwrwPWEt-XiOvBGKhn_Wac3qiKmxjCiz0DbMWnMYFRE/w:500/Z3M6Ly9icmFuZGlm/eS11c2VyY29udGVu/dC1kZXYvcHJvZC9w/cmV2aWV3cy85YTFk/N2Q0ZC1lN2YwLTRk/YTMtYTE2Yy01Zjg0/YzQ1YmRhNjE.webp" AS image'))
+            ->select('id', 'name', 'image')
             ->where('type', $type)
             ->get();
 
