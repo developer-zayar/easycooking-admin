@@ -55,7 +55,17 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $posts = Post::find($id)
+            ->with(['images'])
+            ->withCount('reviews', 'likes')
+            ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
+            // ->selectRaw('(SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) as average_rating')
+            ->limit(20)
+            ->orderBy('created_at', 'desc')
+            ->simplePaginate(20);
+
+        $response = new ApiResponse(true, "posts", $posts);
+        return response()->json($response);
     }
 
     /**
