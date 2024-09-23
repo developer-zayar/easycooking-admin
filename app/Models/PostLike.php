@@ -11,5 +11,6 @@ class PostLike extends Model
     protected $fillable = [
         "user_id",
         "post_id",
+        "is_save"
     ];
 }

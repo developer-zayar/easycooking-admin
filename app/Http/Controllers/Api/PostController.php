@@ -71,7 +71,7 @@ class PostController extends Controller
             return response()->json($response);
         }
 
-        $response = new ApiResponse(true, 'recipe details', $post);
+        $response = new ApiResponse(true, 'post details', $post);
         return response()->json($response);
     }
 

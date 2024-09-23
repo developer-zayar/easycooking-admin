@@ -4,19 +4,20 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Response\ApiResponse;
+use App\Models\AppSetting;
 use App\Models\NoEat;
 use Illuminate\Http\Request;
 
-class NoEatController extends Controller
+class AppSettingController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $noeat = NoEat::all();
+        $data = AppSetting::all();
 
-        $response = new ApiResponse(true, 'NoEat Together', $noeat);
+        $response = new ApiResponse(true, 'AppSettings', $data);
         return response()->json($response);
     }
 
@@ -26,16 +27,14 @@ class NoEatController extends Controller
     public function store(Request $request)
     {
         $attr = $request->validate([
-            'item1' => 'required|string',
-            'item2' => 'required|string',
-            'action' => 'required|string',
+            'key' => 'required|unique:app_settings|max:255',
+            'value' => 'required|string',
+            'remark' => 'string',
         ]);
 
-        $noeat = NoEat::create($request->all());
+        $data = AppSetting::create($request->all());
 
-
-
-        $response = new ApiResponse(true, 'NoEat created.', $noeat);
+        $response = new ApiResponse(true, 'AppSetting created.', $data);
         return response()->json($response);
     }
 
@@ -44,14 +43,14 @@ class NoEatController extends Controller
      */
     public function show(string $id)
     {
-        $noeat = NoEat::find($id);
+        $data = AppSetting::find($id);
 
-        if (!$noeat) {
-            $response = new ApiResponse(false, 'NoEat not found.');
+        if (!$data) {
+            $response = new ApiResponse(false, 'AppSetting Not found.');
             return response()->json($response);
         }
 
-        $response = new ApiResponse(true, 'NoEat details', $noeat);
+        $response = new ApiResponse(true, 'AppSetting details', $data);
         return response()->json($response);
     }
 
@@ -60,16 +59,16 @@ class NoEatController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $noeat = NoEat::find($id);
+        $data = AppSetting::find($id);
 
-        if (!$noeat) {
-            $response = new ApiResponse(false, 'NoEat not found.');
+        if (!$data) {
+            $response = new ApiResponse(false, 'AppSetting Not found.');
             return response()->json($response);
         }
 
-        $noeat->update($request->all());
+        $data->update($request->all());
 
-        $response = new ApiResponse(true, 'NoEat updated.', $noeat);
+        $response = new ApiResponse(true, 'AppSetting updated.', $data);
         return response()->json($response);
     }
 
@@ -78,16 +77,16 @@ class NoEatController extends Controller
      */
     public function destroy(string $id)
     {
-        $noeat = NoEat::find($id);
+        $data = AppSetting::find($id);
 
-        if (!$noeat) {
-            $response = new ApiResponse(false, 'NoEat not found.');
+        if (!$data) {
+            $response = new ApiResponse(false, 'AppSetting Not found.');
             return response()->json($response);
         }
 
-        $noeat->delete();
+        $data->delete();
 
-        $response = new ApiResponse(true, 'NoEat deleted.');
+        $response = new ApiResponse(true, 'AppSetting deleted.');
         return response()->json($response);
     }
 }

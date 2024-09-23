@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AppSettingController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\NoEatController;
@@ -28,6 +29,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware(['apikey'])->group(function () {
     // ...
+    // AppSetting
+    Route::get('appsettings', [AppSettingController::class, 'index']);
+
     // Recipe
     Route::get('/recipes', [RecipeController::class, 'index']);
     Route::get('/recipes/new_recipe', [RecipeController::class, 'newRecipe']);
