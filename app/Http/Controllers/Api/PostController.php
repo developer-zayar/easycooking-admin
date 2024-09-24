@@ -152,4 +152,13 @@ class PostController extends Controller
 
     }
 
+    public function getCalorieContent(){
+        $post = Post::find();
+
+        if (!$post) {
+            $response = new ApiResponse(false, 'Post not found.');
+            return response()->json($response);
+        }
+    }
+
 }

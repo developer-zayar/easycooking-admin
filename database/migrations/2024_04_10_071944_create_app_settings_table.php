@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('app_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('key');
             $table->string('value')->nullable();
             $table->string('remark')->nullable();
             $table->timestamps();
