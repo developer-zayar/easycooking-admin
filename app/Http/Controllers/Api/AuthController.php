@@ -39,11 +39,17 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $attr = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6'
+            'emailOrPhone' => 'required',
+            'password' => 'required|min:6',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $loginType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        // Attempt to log in using the correct login type (email or phone)
+        $credentials = [
+            $loginType => $request->emailOrPhone,
+            'password' => $request->password,
+        ];
 
         if (!Auth::attempt($credentials)) {
             $response = new ApiResponse(false, 'Invalid credentials');

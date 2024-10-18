@@ -23,7 +23,7 @@ class PostReviewController extends Controller
         }
 
         $review = $post->reviews()
-            //->with('user:id,name,image')
+            ->with('user:id,name,image')
             ->get();
 
         $response = new ApiResponse(true, 'post reviews', $review);
