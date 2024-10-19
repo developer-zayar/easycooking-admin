@@ -56,12 +56,6 @@ class AuthController extends Controller
 
         $loginType = filter_var($request->emailOrPhone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
-        if ($loginType == 'email') {
-            $request->validate(['emailOrPhone' => 'unique:users,email']);
-        } else {
-            $request->validate(['emailOrPhone' => 'unique:users,phone']);
-        }
-
         // Attempt to log in using the correct login type (email or phone)
         $credentials = [
             $loginType => $request->emailOrPhone,
