@@ -9,6 +9,7 @@ use App\Models\User;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Log;
 use Validator;
 
 class AuthController extends Controller
@@ -17,18 +18,28 @@ class AuthController extends Controller
     {
         $attr = $request->validate([
             'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
+            // 'email' => 'required|email|unique:users,email',
+            'emailOrPhone' => 'required',
             'password' => 'required|min:6|confirmed'
         ]);
+
+        $loginType = filter_var($request->emailOrPhone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        error_log("$loginType => $request->emailOrPhone");
+        if ($loginType == 'email') {
+            $request->validate(['emailOrPhone' => 'unique:users,email']);
+        } else {
+            $request->validate(['emailOrPhone' => 'unique:users,phone']);
+        }
 
         //create user
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            $loginType => $request->emailOrPhone,
             'password' => Hash::make($request->password)
         ]);
 
-        $data['access_token'] = $user->createToken($request->email)->plainTextToken;
+        $data['access_token'] = $user->createToken('auth_token')->plainTextToken;
         $data['token_type'] = 'Bearer';
         $data['user'] = $user;
 
@@ -43,7 +54,13 @@ class AuthController extends Controller
             'password' => 'required|min:6',
         ]);
 
-        $loginType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        $loginType = filter_var($request->emailOrPhone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        if ($loginType == 'email') {
+            $request->validate(['emailOrPhone' => 'unique:users,email']);
+        } else {
+            $request->validate(['emailOrPhone' => 'unique:users,phone']);
+        }
 
         // Attempt to log in using the correct login type (email or phone)
         $credentials = [
