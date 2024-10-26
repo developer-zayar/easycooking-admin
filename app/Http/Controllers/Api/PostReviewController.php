@@ -22,11 +22,11 @@ class PostReviewController extends Controller
             return response()->json($response);
         }
 
-        $review = $post->reviews()
+        $postReviews = $post->reviews()
             ->with('user:id,name,image')
             ->get();
 
-        $response = new ApiResponse(true, 'post reviews', $review);
+        $response = new ApiResponse(true, 'post reviews', $postReviews);
         return response()->json($response);
     }
 
@@ -47,14 +47,14 @@ class PostReviewController extends Controller
             'comment' => 'string|nullable',
         ]);
 
-        PostReview::create([
+        $postReview = PostReview::create([
             'post_id' => $id,
             'user_id' => auth()->user()->id,
             'rating' => $request['rating'],
             'comment' => $request['comment'],
         ]);
 
-        $response = new ApiResponse(true, 'Review saved.');
+        $response = new ApiResponse(true, 'Review saved.', $postReview);
         return response()->json($response);
 
     }
