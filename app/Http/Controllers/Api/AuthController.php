@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Log;
 use Validator;
+use Mail;
 
 class AuthController extends Controller
 {
@@ -73,6 +74,34 @@ class AuthController extends Controller
 
         $response = new ApiResponse(true, 'User is logged in successfully.', $data);
         return response()->json($response);
+    }
+
+    public function sendOTP(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $checkUser = User::where('email', $request->email)->first();
+        if (!$checkUser) {
+            $response = new ApiResponse(false, 'User is not registered!');
+            return response()->json($response);
+        } else {
+            $otp = rand(100000, 999999);
+            $updatedUser = User::where('email', $request->email)
+                ->update([
+                    'phone' => $otp,
+                ]);
+
+            Mail::send('emails.loginwithotp', ['otp' => $otp], function ($message) use ($request) {
+                $message->to($request->email);
+                $message->subject('Login with OTP - EasyCooking');
+            });
+        }
+
+        $response = new ApiResponse(true, 'OTP sent successfully.');
+        return response()->json($response);
+
     }
 
     public function logout()
