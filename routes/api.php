@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\PostReviewController;
 use App\Http\Controllers\Api\RecipeController;
 use App\Http\Controllers\Api\RecipeReviewController;
 use App\Http\Controllers\GoogleFileController;
+use App\Http\Controllers\FCMController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +57,9 @@ Route::middleware(['apikey'])->group(function () {
     Route::get('/posts/{id}/reviews', [PostReviewController::class, 'index']);
 
     //Route::post('/fileupload', [GoogleFileController::class, 'store']);
+    //FCM
+    Route::put('update-device-token', [FCMController::class, 'updateDeviceToken']);
+    Route::post('send-fcm-notification', [FCMController::class, 'sendFcmNotification']);
 
     // Public routes of authtication
     Route::controller(AuthController::class)->group(function () {
