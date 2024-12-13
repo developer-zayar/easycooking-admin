@@ -77,6 +77,10 @@ class FCMController extends Controller
                     "title" => $title,
                     "body" => $description,
                 ],
+                "data" => [
+                    "title" => "Hello",
+                    "body" => "This is from data.",
+                ]
             ]
         ];
         $payload = json_encode($data);
