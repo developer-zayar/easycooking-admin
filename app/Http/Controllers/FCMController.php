@@ -78,8 +78,8 @@ class FCMController extends Controller
                     "body" => $description,
                 ],
                 "data" => [
-                    "title" => "Hello",
-                    "body" => "This is from data.",
+                    "title" => $title,
+                    "body" => $description,
                 ]
             ]
         ];
