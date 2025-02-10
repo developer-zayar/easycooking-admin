@@ -103,34 +103,61 @@ class RecipeController extends Controller
     }
 
 
-    public function newRecipe()
+    public function newRecipe(Request $request)
     {
+        $perPage = $request->input('per_page', 20);
+        $page = $request->input('page', 1);
+
         $recipes = Recipe::with('category')
             ->select('id', 'name', 'image', 'views', 'fav', 'category_id', 'post_id')
             ->where('category_id', '<>', 1000)
             ->orderBy('created_at', 'desc')
-            ->take(20)
-            ->get();
+            ->paginate($perPage, ['*'], 'page', $page);
+        // ->take(20)
+        // ->get();
 
-        $response = new ApiResponse(true, 'new recipes', $recipes);
+        $response = [
+            'success' => true,
+            'message' => 'New recipes',
+            'page' => $recipes->currentPage(),
+            'total_pages' => $recipes->lastPage(),
+            'total_results' => $recipes->total(),
+            'results' => $recipes->items(),
+        ];
+
         return response()->json($response);
     }
 
-    public function popular()
+    public function popular(Request $request)
     {
+        $perPage = $request->input('per_page', 20);
+        $page = $request->input('page', 1);
+
         $recipes = Recipe::with('category')
             ->select('id', 'name', 'image', 'views', 'fav', 'category_id', 'post_id')
             ->where('category_id', '<>', 1000)
             ->orderBy('views', 'desc')
-            ->take(20)
-            ->get();
+            ->paginate($perPage, ['*'], 'page', $page);
+        // ->take(20)
+        // ->get();
 
-        $response = new ApiResponse(true, 'popular recipes', $recipes);
+        $response = [
+            'success' => true,
+            'message' => 'Popular recipes',
+            'page' => $recipes->currentPage(),
+            'total_pages' => $recipes->lastPage(),
+            'total_results' => $recipes->total(),
+            'results' => $recipes->items(),
+        ];
+
         return response()->json($response);
     }
 
-    public function cookingKnowledge()
+    public function cookingKnowledge(Request $request)
     {
+        $perPage = $request->input('per_page', 20);
+        $page = $request->input('page', 1);
+
         $recipes = Recipe::with('category')
             ->select('id', 'name', 'image', 'views', 'fav', 'category_id', 'post_id')
             // ->whereHas('category', function ($query) {
@@ -138,10 +165,19 @@ class RecipeController extends Controller
             // })
             ->where('category_id', '=', 1000)
             ->orderBy('created_at', 'desc')
-            ->take(10)
-            ->get();
+            ->paginate($perPage, ['*'], 'page', $page);
+        // ->take(10)
+        // ->get();
 
-        $response = new ApiResponse(true, 'cooking knowledge', $recipes);
+        $response = [
+            'success' => true,
+            'message' => 'Cooking knowledge',
+            'page' => $recipes->currentPage(),
+            'total_pages' => $recipes->lastPage(),
+            'total_results' => $recipes->total(),
+            'results' => $recipes->items(),
+        ];
+
         return response()->json($response);
     }
 
