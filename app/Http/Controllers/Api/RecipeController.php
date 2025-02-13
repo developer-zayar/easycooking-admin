@@ -24,7 +24,7 @@ class RecipeController extends Controller
         return response()->json($response);
     }
 
-    public function getPostByCategoryId($category_id)
+    public function getRecipeByCategoryId($category_id)
     {
         $recipes = Recipe::with('category')
             ->select('id', 'name', 'image', 'views', 'fav', 'category_id', 'post_id')

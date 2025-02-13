@@ -14,8 +14,11 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $perPage = $request->input('per_page', 20);
+        $page = $request->input('page', 1);
+
         if (auth()->user() == null) {
             $posts = Post::with(['images'])
                 ->withCount('reviews', 'likes')
@@ -23,7 +26,8 @@ class PostController extends Controller
                 // ->selectRaw('(SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) as average_rating')
                 ->limit(20)
                 ->orderBy('created_at', 'desc')
-                ->simplePaginate(20);
+                ->paginate($perPage, ['*'], 'page', $page);
+            // ->simplePaginate(20);
         } else {
             $posts = Post::with(['images'])
                 ->withCount('reviews', 'likes')
@@ -34,12 +38,23 @@ class PostController extends Controller
                 })
                 ->limit(20)
                 ->orderBy('created_at', 'desc')
-                ->simplePaginate(20);
+                ->paginate($perPage, ['*'], 'page', $page);
+            // ->simplePaginate(20);
         }
 
+        $response = [
+            'success' => true,
+            'message' => 'Posts',
+            'page' => $posts->currentPage(),
+            'total_pages' => $posts->lastPage(),
+            'total_results' => $posts->total(),
+            'results' => $posts->items(),
+        ];
+
+        return response()->json($response);
 
         // $response = new ApiResponse(true, 'Posts', $posts);
-        return response()->json($posts);
+        // return response()->json($posts);
     }
 
     /**
@@ -152,7 +167,8 @@ class PostController extends Controller
 
     }
 
-    public function getCalorieContent(){
+    public function getCalorieContent()
+    {
         $post = Post::find();
 
         if (!$post) {

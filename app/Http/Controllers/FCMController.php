@@ -33,24 +33,24 @@ class FCMController extends Controller
     public function sendFcmNotification(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'int',
             'title' => 'required|string',
             'body' => 'required|string',
             'image_url' => 'string',
         ]);
 
-        $user = User::find($request->user_id);
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
+        // $user = User::find($request->user_id);
+        // if (!$user) {
+        //     return response()->json(['message' => 'User not found'], 404);
+        // }
 
-        $fcm = $user->fcm_token;
+        // $fcm = $user->fcm_token;
 
-        if (!$fcm) {
-            $response = new ApiResponse(false, 'User does not have a device token');
-            return response()->json($response, 400);
-            // return response()->json(['message' => 'User does not have a device token'], 400);
-        }
+        // if (!$fcm) {
+        //     $response = new ApiResponse(false, 'User does not have a device token');
+        //     return response()->json($response, 400);
+        //     // return response()->json(['message' => 'User does not have a device token'], 400);
+        // }
 
         $title = $request->title;
         $description = $request->body;
@@ -72,7 +72,8 @@ class FCMController extends Controller
 
         $data = [
             "message" => [
-                "token" => $fcm,
+                "topic" => "topic_global",
+                // "token" => $fcm,
                 "notification" => [
                     "title" => $title,
                     "body" => $description,
@@ -80,6 +81,11 @@ class FCMController extends Controller
                 "data" => [
                     "title" => $title,
                     "body" => $description,
+                    "image_url" => $request->image_url,
+                    "link_url" => $request->link_url,
+                    "post_id" => $request->post_id,
+                    "isScheduled" => $request->isScheduled,
+                    "scheduledTime" => $request->scheduledTime
                 ]
             ]
         ];

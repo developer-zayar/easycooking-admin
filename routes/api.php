@@ -39,7 +39,7 @@ Route::middleware(['apikey'])->group(function () {
     Route::get('/recipes/popular', [RecipeController::class, 'popular']);
     Route::get('/recipes/cooking_knowledge', [RecipeController::class, 'cookingKnowledge']);
     Route::get('/recipes/{id}', [RecipeController::class, 'show']);
-    Route::get('/recipes/category/{category_id}', [RecipeController::class, 'getPostByCategoryId']);
+    Route::get('/recipes/category/{category_id}', [RecipeController::class, 'getRecipeByCategoryId']);
 
     // Recipe review
     Route::get('/recipes/{id}/reviews', [RecipeReviewController::class, 'index']);
