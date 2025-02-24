@@ -24,7 +24,6 @@ class PostController extends Controller
                 ->withCount('reviews', 'likes')
                 ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
                 // ->selectRaw('(SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) as average_rating')
-                ->limit(20)
                 ->orderBy('created_at', 'desc')
                 ->paginate($perPage, ['*'], 'page', $page);
             // ->simplePaginate(20);
@@ -36,7 +35,6 @@ class PostController extends Controller
                     return $like->where('user_id', auth()->user()->id)
                         ->select('id', 'user_id', 'post_id')->get();
                 })
-                ->limit(20)
                 ->orderBy('created_at', 'desc')
                 ->paginate($perPage, ['*'], 'page', $page);
             // ->simplePaginate(20);
@@ -55,6 +53,50 @@ class PostController extends Controller
 
         // $response = new ApiResponse(true, 'Posts', $posts);
         // return response()->json($posts);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query', '');
+        $perPage = $request->input('per_page', 10);
+        $page = $request->input('page', 1);
+
+        if (auth()->user() == null) {
+            $posts = Post::with(['images'])
+                ->withCount('reviews', 'likes')
+                ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
+                ->where(function ($q) use ($query) {
+                    $q->where('title', 'LIKE', "%{$query}%")
+                        ->orWhere('content', 'LIKE', "%{$query}%");
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate($perPage, ['*'], 'page', $page);
+        } else {
+            $posts = Post::with(['images'])
+                ->withCount('reviews', 'likes')
+                ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
+                ->with('likes', function ($like) {
+                    return $like->where('user_id', auth()->user()->id)
+                        ->select('id', 'user_id', 'post_id');
+                })
+                ->where(function ($q) use ($query) {
+                    $q->where('title', 'LIKE', "%{$query}%")
+                        ->orWhere('content', 'LIKE', "%{$query}%");
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate($perPage, ['*'], 'page', $page);
+        }
+
+        $response = [
+            'success' => true,
+            'message' => 'Search results',
+            'page' => $posts->currentPage(),
+            'total_pages' => $posts->lastPage(),
+            'total_results' => $posts->total(),
+            'results' => $posts->items(),
+        ];
+
+        return response()->json($response);
     }
 
     /**

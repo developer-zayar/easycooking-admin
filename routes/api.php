@@ -35,6 +35,7 @@ Route::middleware(['apikey'])->group(function () {
 
     // Recipe
     Route::get('/recipes', [RecipeController::class, 'index']);
+    Route::get('/recipes/search', [RecipeController::class, 'search']);
     Route::get('/recipes/new_recipe', [RecipeController::class, 'newRecipe']);
     Route::get('/recipes/popular', [RecipeController::class, 'popular']);
     Route::get('/recipes/cooking_knowledge', [RecipeController::class, 'cookingKnowledge']);
@@ -51,6 +52,7 @@ Route::middleware(['apikey'])->group(function () {
     Route::apiResource('noeat', NoEatController::class);
 
     // Post
+    Route::get('/posts/search', [PostController::class, 'search']);
     Route::apiResource('posts', PostController::class);
 
     // PostReview

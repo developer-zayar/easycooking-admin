@@ -102,6 +102,33 @@ class RecipeController extends Controller
         //
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->input('query', '');
+        $perPage = $request->input('per_page', 20);
+        $page = $request->input('page', 1);
+
+        $recipes = Recipe::with('category')
+            ->select('id', 'name', 'image', 'views', 'fav', 'category_id', 'post_id')
+            ->where('category_id', '<>', 1000) // Exclude category 1000
+            ->when($query, function ($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        $response = [
+            'success' => true,
+            'message' => 'Search results',
+            'query' => $query,
+            'page' => $recipes->currentPage(),
+            'total_pages' => $recipes->lastPage(),
+            'total_results' => $recipes->total(),
+            'results' => $recipes->items(),
+        ];
+
+        return response()->json($response);
+    }
 
     public function newRecipe(Request $request)
     {

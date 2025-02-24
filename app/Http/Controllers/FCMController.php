@@ -72,12 +72,12 @@ class FCMController extends Controller
 
         $data = [
             "message" => [
-                "topic" => "topic_global",
+                "topic" => "easycooking-topic",
                 // "token" => $fcm,
-                "notification" => [
-                    "title" => $title,
-                    "body" => $description,
-                ],
+                // "notification" => [
+                //     "title" => $title,
+                //     "body" => $description,
+                // ],
                 "data" => [
                     "title" => $title,
                     "body" => $description,
