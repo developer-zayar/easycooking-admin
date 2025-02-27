@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.pas.easycooking",
+            "sha256_cert_fingerprints": [
+                "9E:B5:01:3E:10:94:A1:43:AD:58:29:97:70:90:97:32:6F:A5:8D:35:E7:85:A6:9C:C9:90:53:27:F4:BD:A7:F3"
+            ]
+        }
+    }
+]

@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\PostReviewController;
 use App\Http\Controllers\Api\RecipeController;
 use App\Http\Controllers\Api\RecipeReviewController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\GoogleFileController;
 use App\Http\Controllers\FCMController;
 use Illuminate\Http\Request;
@@ -57,6 +58,9 @@ Route::middleware(['apikey'])->group(function () {
 
     // PostReview
     Route::get('/posts/{id}/reviews', [PostReviewController::class, 'index']);
+
+    // Feedback
+    Route::apiResource('feedback', FeedbackController::class);
 
     //Route::post('/fileupload', [GoogleFileController::class, 'store']);
     //FCM
