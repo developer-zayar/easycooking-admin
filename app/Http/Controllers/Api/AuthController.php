@@ -138,6 +138,7 @@ class AuthController extends Controller
             'email' => 'required|email',
             'provider' => 'required|string',
             'provider_id' => 'required',
+            'image' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -172,7 +173,7 @@ class AuthController extends Controller
             $newUser->password = $password;
             $newUser->provider = $request->provider;
             $newUser->provider_id = $request->provider_id;
-
+            $newUser->image = $request->image;
             $newUser->save();
 
         }
