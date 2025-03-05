@@ -15,30 +15,78 @@ use Mail;
 
 class AuthController extends Controller
 {
+    public function registerDevice(Request $request)
+    {
+        $request->validate([
+            'device_id' => 'required|string',
+            'device_name' => 'required|string',
+        ]);
+
+        $user = User::where('device_id', $request->device_id)->first();
+
+        if ($user) {
+            // Update existing device details
+            $user->update([
+                'device_name' => $request->device_name,
+            ]);
+            $message = 'Device updated successfully.';
+        } else {
+            // Generate a guest username
+            $guestUsername = 'user_' . substr(md5(uniqid()), 0, 8);
+            // Create a new user
+            $user = User::create([
+                'name' => $guestUsername,
+                'device_id' => $request->device_id,
+                'device_name' => $request->device_name,
+            ]);
+
+            $message = 'Device registered successfully.';
+        }
+
+        $data['user'] = $user;
+        $response = new ApiResponse(true, $message, $data);
+        return response()->json($response);
+    }
+
     public function register(Request $request)
     {
         $attr = $request->validate([
             'name' => 'required|string',
-            // 'email' => 'required|email|unique:users,email',
-            'emailOrPhone' => 'required',
-            'password' => 'required|min:6|confirmed'
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+            'device_id' => 'string',
+            'device_name' => 'string',
         ]);
 
-        $loginType = filter_var($request->emailOrPhone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        // $loginType = filter_var($request->emailOrPhone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
-        error_log("$loginType => $request->emailOrPhone");
-        if ($loginType == 'email') {
-            $request->validate(['emailOrPhone' => 'unique:users,email']);
+        // error_log("$loginType => $request->emailOrPhone");
+        // if ($loginType == 'email') {
+        //     $request->validate(['emailOrPhone' => 'unique:users,email']);
+        // } else {
+        //     $request->validate(['emailOrPhone' => 'unique:users,phone']);
+        // }
+
+        $user = User::where('device_id', $request->device_id)->first();
+        if ($user && is_null($user->email)) {
+            // Update existing device details
+            $user->update([
+                'name' => $request->name,
+                // $loginType => $request->emailOrPhone,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'device_name' => $request->device_name,
+            ]);
         } else {
-            $request->validate(['emailOrPhone' => 'unique:users,phone']);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'device_id' => $request->device_id,
+                'device_name' => $request->device_name,
+            ]);
         }
 
-        //create user
-        $user = User::create([
-            'name' => $request->name,
-            $loginType => $request->emailOrPhone,
-            'password' => Hash::make($request->password)
-        ]);
 
         $data['access_token'] = $user->createToken('auth_token')->plainTextToken;
         $data['token_type'] = 'Bearer';
@@ -51,21 +99,33 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $attr = $request->validate([
-            'emailOrPhone' => 'required',
+            'email' => 'required|email',
             'password' => 'required|min:6',
+            'device_id' => 'string',
+            'device_name' => 'string',
         ]);
 
-        $loginType = filter_var($request->emailOrPhone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        // $loginType = filter_var($request->emailOrPhone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
         // Attempt to log in using the correct login type (email or phone)
         $credentials = [
-            $loginType => $request->emailOrPhone,
+            'email' => $request->email,
             'password' => $request->password,
         ];
 
         if (!Auth::attempt($credentials)) {
-            $response = new ApiResponse(false, 'Invalid credentials');
+            $response = new ApiResponse(false, 'Email or password is incorrect. Please try again.');
             return response()->json($response);
+        }
+
+        $user = auth()->user();
+
+        // Update device_id and device_name if provided
+        if ($request->filled('device_id') || $request->filled('device_name')) {
+            $user->update([
+                'device_id' => $request->device_id ?? $user->device_id,
+                'device_name' => $request->device_name ?? $user->device_name,
+            ]);
         }
 
         $data['access_token'] = auth()->user()->createToken('auth_token')->plainTextToken;

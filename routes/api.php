@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware(['apikey'])->group(function () {
     // ...
+    Route::post('register-device', [AuthController::class, 'registerDevice']);
     // AppSetting
     Route::get('appsettings', [AppSettingController::class, 'index']);
 
