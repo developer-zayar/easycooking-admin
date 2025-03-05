@@ -25,15 +25,12 @@ class AuthController extends Controller
         $user = User::where('device_id', $request->device_id)->first();
 
         if ($user) {
-            // Update existing device details
             $user->update([
                 'device_name' => $request->device_name,
             ]);
             $message = 'Device updated successfully.';
         } else {
-            // Generate a guest username
             $guestUsername = 'user_' . substr(md5(uniqid()), 0, 8);
-            // Create a new user
             $user = User::create([
                 'name' => $guestUsername,
                 'device_id' => $request->device_id,
@@ -86,7 +83,6 @@ class AuthController extends Controller
                 'device_name' => $request->device_name,
             ]);
         }
-
 
         $data['access_token'] = $user->createToken('auth_token')->plainTextToken;
         $data['token_type'] = 'Bearer';
@@ -206,9 +202,9 @@ class AuthController extends Controller
             return response()->json($response);
         }
 
-        $userData = User::where('provider_id', $request->provider_id)->first();
+        $user = User::where('provider_id', $request->provider_id)->first();
 
-        if (!$userData) {
+        if (!$user) {
             if ($request->email) {
                 $emailExists = User::where('email', $request->email)->first();
                 if ($emailExists) {
@@ -227,30 +223,29 @@ class AuthController extends Controller
 
             $password = Helpers::generatePassword(8);
 
-            $newUser = new User();
-            $newUser->name = $request->name;
-            $newUser->email = $request->email;
-            $newUser->password = $password;
-            $newUser->provider = $request->provider;
-            $newUser->provider_id = $request->provider_id;
-            $newUser->image = $request->image;
-            $newUser->save();
-
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => $password,
+                'provider' => $request->provider,
+                'provider_id' => $request->provider_id,
+                'image' => $request->image,
+            ]);
         }
 
-        $authUser = User::where('provider_id', $request->provider_id)
-            ->where('provider', $request->provider)
-            ->first();
+        // $authUser = User::where('provider_id', $request->provider_id)
+        //     ->where('provider', $request->provider)
+        //     ->first();
 
-        if (!$authUser) {
-            $response = new ApiResponse(false, 'Account is not valid');
-            return response()->json($response);
-        }
+        // if (!$authUser) {
+        //     $response = new ApiResponse(false, 'Account is not valid');
+        //     return response()->json($response);
+        // }
 
-        $data['access_token'] = $authUser->createToken('auth_token')->plainTextToken;
+        // $loginUser = User::find($authUser->id);
+        $data['access_token'] = $user->createToken('auth_token')->plainTextToken;
         $data['token_type'] = 'Bearer';
-        $loginUser = User::find($authUser->id);
-        $data['user'] = $loginUser;
+        $data['user'] = $user;
 
         $response = new ApiResponse(true, 'User is logged in successfully.', $data);
         return response()->json($response);
