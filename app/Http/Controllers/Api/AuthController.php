@@ -195,6 +195,8 @@ class AuthController extends Controller
             'provider' => 'required|string',
             'provider_id' => 'required',
             'image' => 'string',
+            'device_id' => 'string',
+            'device_name' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -223,13 +225,34 @@ class AuthController extends Controller
 
             $password = Helpers::generatePassword(8);
 
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => $password,
-                'provider' => $request->provider,
-                'provider_id' => $request->provider_id,
-                'image' => $request->image,
+            $user = User::where('device_id', $request->device_id)->first();
+            if ($user && is_null($user->email)) {
+                // Update existing device details
+                $user->update([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => $password,
+                    'provider' => $request->provider,
+                    'provider_id' => $request->provider_id,
+                    'image' => $request->image,
+                    'device_name' => $request->device_name,
+                ]);
+            } else {
+                $user = User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => $password,
+                    'provider' => $request->provider,
+                    'provider_id' => $request->provider_id,
+                    'image' => $request->image,
+                    'device_id' => $request->device_id,
+                    'device_name' => $request->device_name,
+                ]);
+            }
+        } else {
+            $user->update([
+                'device_id' => $request->device_id,
+                'device_name' => $request->device_name,
             ]);
         }
 

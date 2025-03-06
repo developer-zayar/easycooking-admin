@@ -15,19 +15,20 @@ class FCMController extends Controller
     public function updateDeviceToken(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'device_id' => 'required|string',
             'fcm_token' => 'required|string',
         ]);
 
         // $request->user()->update(['fcm_token' => $request->fcm_token]);
-        $user = User::find($request->user_id);
+        $user = User::where('device_id', $request->device_id)->first();
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
         $user->update(['fcm_token' => $request->fcm_token]);
 
-        return response()->json(['message' => 'Device token updated successfully']);
+        $response = new ApiResponse(true, 'FCM token updated successfully');
+        return response()->json($response);
     }
 
     public function sendFcmNotification(Request $request)
