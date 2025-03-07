@@ -27,7 +27,7 @@ class RecipeController extends Controller
     public function getRecipeByCategoryId($category_id)
     {
         $recipes = Recipe::with('category')
-            ->select('id', 'name', 'image', 'views', 'fav', 'category_id', 'post_id')
+            ->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
             ->where('category_id', $category_id)
             ->get();
 
@@ -52,7 +52,20 @@ class RecipeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|unique:recipes',
+            'description' => 'nullable|string',
+            'instructions' => 'required|string',
+            'prep_time' => 'nullable|integer',
+            'cook_time' => 'nullable|integer',
+            'category_id' => 'required|exists:categories,id',
+        ]);
+
+        $recipe = Recipe::create($validated);
+
+        $response = new ApiResponse(true, 'recipe added successfully', $recipe);
+        return response()->json($response);
     }
 
     /**
@@ -109,7 +122,7 @@ class RecipeController extends Controller
         $page = $request->input('page', 1);
 
         $recipes = Recipe::with('category')
-            ->select('id', 'name', 'image', 'views', 'fav', 'category_id', 'post_id')
+            ->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
             ->where('category_id', '<>', 1000) // Exclude category 1000
             ->when($query, function ($q) use ($query) {
                 $q->where('name', 'LIKE', "%{$query}%");
@@ -136,7 +149,7 @@ class RecipeController extends Controller
         $page = $request->input('page', 1);
 
         $recipes = Recipe::with('category')
-            ->select('id', 'name', 'image', 'views', 'fav', 'category_id', 'post_id')
+            ->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
             ->where('category_id', '<>', 1000)
             ->orderBy('created_at', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
@@ -161,9 +174,9 @@ class RecipeController extends Controller
         $page = $request->input('page', 1);
 
         $recipes = Recipe::with('category')
-            ->select('id', 'name', 'image', 'views', 'fav', 'category_id', 'post_id')
+            ->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
             ->where('category_id', '<>', 1000)
-            ->orderBy('views', 'desc')
+            ->orderBy('view_count', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
         // ->take(20)
         // ->get();
@@ -186,7 +199,7 @@ class RecipeController extends Controller
         $page = $request->input('page', 1);
 
         $recipes = Recipe::with('category')
-            ->select('id', 'name', 'image', 'views', 'fav', 'category_id', 'post_id')
+            ->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
             // ->whereHas('category', function ($query) {
             //     $query->where('id', 1000);
             // })

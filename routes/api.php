@@ -36,6 +36,7 @@ Route::middleware(['apikey'])->group(function () {
     Route::get('appsettings', [AppSettingController::class, 'index']);
 
     // Recipe
+    Route::post('/recipes', [RecipeController::class, 'store']);
     Route::get('/recipes', [RecipeController::class, 'index']);
     Route::get('/recipes/search', [RecipeController::class, 'search']);
     Route::get('/recipes/new_recipe', [RecipeController::class, 'newRecipe']);

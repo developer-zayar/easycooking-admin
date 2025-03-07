@@ -13,10 +13,14 @@ class Recipe extends Model
         'category_id',
         'post_id',
         'name',
+        'slug',
         'image',
-        'content',
-        'views',
-        'fav',
+        'description',
+        'instructions',
+        'prep_time',
+        'cook_time',
+        'view_count',
+        'fav_count',
         'inactive'
     ];
 
