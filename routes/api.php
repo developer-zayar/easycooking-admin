@@ -8,8 +8,8 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\PostReviewController;
 use App\Http\Controllers\Api\RecipeController;
 use App\Http\Controllers\Api\RecipeReviewController;
+use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\FeedbackController;
-use App\Http\Controllers\GoogleFileController;
 use App\Http\Controllers\FCMController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -97,6 +97,13 @@ Route::middleware(['apikey'])->group(function () {
         Route::get('/posts/{id}/like', [PostController::class, 'likeOrUnlike']);
         // Save
         Route::get('/posts/{id}/save', [RecipeReviewController::class, 'saveOrUnsave']);
+
+        // Favorites
+        // Route::post('/favorites/{type}/{id}', [FavoriteController::class, 'toggleFavorite']);
+        Route::post('/favorites/{type}', [FavoriteController::class, 'addFavorite']);
+        Route::post('/favorites/{type}/remove', [FavoriteController::class, 'removeFavorite']);
+        Route::get('/favorites/posts', [FavoriteController::class, 'getFavoritePosts']);
+        Route::get('/favorites/recipes', [FavoriteController::class, 'getFavoriteRecipes']);
     });
 
 });

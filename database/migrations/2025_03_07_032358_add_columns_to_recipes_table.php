@@ -21,7 +21,7 @@ return new class extends Migration
 
         Schema::table('recipes', function (Blueprint $table) {
             $table->string('slug')->unique()->nullable(false)->change();
-            $table->text('instructions')->nullable()->after('content');
+            $table->text('instructions')->nullable()->after('description');
             $table->integer('prep_time')->unsigned()->nullable()->after('instructions');
             $table->integer('cook_time')->unsigned()->nullable()->after('prep_time');
             $table->enum('status', ['draft', 'published', 'archived'])->default('draft')->after('cook_time');

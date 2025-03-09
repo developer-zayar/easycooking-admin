@@ -20,6 +20,7 @@ class AuthController extends Controller
         $request->validate([
             'device_id' => 'required|string',
             'device_name' => 'required|string',
+            'fcm_token' => 'string',
         ]);
 
         $user = User::where('device_id', $request->device_id)->first();
@@ -28,6 +29,11 @@ class AuthController extends Controller
             $user->update([
                 'device_name' => $request->device_name,
             ]);
+            if ($request->filled('fcm_token')) {
+                $user->update([
+                    'fcm_token' => $request->fcm_token,
+                ]);
+            }
             $message = 'Device updated successfully.';
         } else {
             $guestUsername = 'user_' . substr(md5(uniqid()), 0, 8);
@@ -35,6 +41,7 @@ class AuthController extends Controller
                 'name' => $guestUsername,
                 'device_id' => $request->device_id,
                 'device_name' => $request->device_name,
+                'fcm_token' => $request->fcm_token,
             ]);
 
             $message = 'Device registered successfully.';
