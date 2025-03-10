@@ -106,6 +106,7 @@ class AuthController extends Controller
             'password' => 'required|min:6',
             'device_id' => 'string',
             'device_name' => 'string',
+            'fcm_token' => 'string',
         ]);
 
         // $loginType = filter_var($request->emailOrPhone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
@@ -124,10 +125,11 @@ class AuthController extends Controller
         $user = auth()->user();
 
         // Update device_id and device_name if provided
-        if ($request->filled('device_id') || $request->filled('device_name')) {
+        if ($request->filled('device_id') || $request->filled('device_name') || $request->filled('fcm_token')) {
             $user->update([
                 'device_id' => $request->device_id ?? $user->device_id,
                 'device_name' => $request->device_name ?? $user->device_name,
+                'fcm_token' => $request->fcm_token,
             ]);
         }
 
@@ -204,6 +206,7 @@ class AuthController extends Controller
             'image' => 'string',
             'device_id' => 'string',
             'device_name' => 'string',
+            'fcm_token' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -243,6 +246,7 @@ class AuthController extends Controller
                     'provider_id' => $request->provider_id,
                     'image' => $request->image,
                     'device_name' => $request->device_name,
+                    'fcm_token' => $request->fcm_token,
                 ]);
             } else {
                 $user = User::create([
@@ -254,12 +258,14 @@ class AuthController extends Controller
                     'image' => $request->image,
                     'device_id' => $request->device_id,
                     'device_name' => $request->device_name,
+                    'fcm_token' => $request->fcm_token,
                 ]);
             }
         } else {
             $user->update([
                 'device_id' => $request->device_id,
                 'device_name' => $request->device_name,
+                'fcm_token' => $request->fcm_token,
             ]);
         }
 

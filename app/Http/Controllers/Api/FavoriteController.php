@@ -113,7 +113,11 @@ class FavoriteController extends Controller
         $favorites = Favorite::where('user_id', $user->id)
             ->where('favoritable_type', Post::class)
             ->orderBy('created_at', 'desc')
-            ->with('favoritable')
+            ->with([
+                'favoritable' => function ($query) {
+                    $query->with(['images'])->withCount(['reviews', 'likes']);
+                }
+            ])
             ->get()
             ->pluck('favoritable');
 
@@ -129,7 +133,11 @@ class FavoriteController extends Controller
         $favorites = Favorite::where('user_id', $user->id)
             ->where('favoritable_type', Recipe::class)
             ->orderBy('created_at', 'desc')
-            ->with('favoritable')
+            ->with([
+                'favoritable' => function ($query) {
+                    $query->with('category')->with(['images', 'reviews']);
+                }
+            ])
             ->get()
             ->pluck('favoritable');
 

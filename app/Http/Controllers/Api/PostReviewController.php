@@ -54,6 +54,10 @@ class PostReviewController extends Controller
             'comment' => $request['comment'],
         ]);
 
+        $postReview = PostReview::where('id', $postReview->id)
+            ->with('user:id,name,image')
+            ->first();
+
         $response = new ApiResponse(true, 'Review saved.', $postReview);
         return response()->json($response);
 
@@ -91,7 +95,7 @@ class PostReviewController extends Controller
 
         $review->update($request->all());
 
-        $response = new ApiResponse(true, "Review deleted.");
+        $response = new ApiResponse(true, "Review updated.");
         return response()->json($response);
     }
 
