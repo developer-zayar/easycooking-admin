@@ -81,6 +81,7 @@ Route::middleware(['apikey'])->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         // Auth
         Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/update-user', [AuthController::class, 'updateUser']);
 
         // Recipe Review
         Route::post('/recipes/{id}/reviews', [RecipeReviewController::class, 'store']);
