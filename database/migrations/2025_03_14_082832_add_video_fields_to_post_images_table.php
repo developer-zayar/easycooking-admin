@@ -11,9 +11,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('post_images', function (Blueprint $table) {
-            $table->string('contentType')->nullable()->after('url');
-            $table->string('videoId')->nullable()->after('contentType');
-            $table->string('videoUrl')->nullable()->after('videoId');
+            $table->string('content_type')->nullable()->after('url');
+            $table->string('video_id')->nullable()->after('content_type');
+            $table->string('video_url')->nullable()->after('video_id');
         });
     }
 
@@ -23,7 +23,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('post_images', function (Blueprint $table) {
-            $table->dropColumn(['contentType', 'videoId', 'videoUrl']);
+            $table->dropColumn(['content_type', 'video_id', 'video_url']);
         });
     }
 };
