@@ -75,7 +75,12 @@ Route::middleware(['apikey'])->group(function () {
         Route::post('/login', 'login');
         Route::post('/social-login', 'socialLogin');
         Route::post('/social-logout', 'socialLogout');
+        Route::post('/send-otp', 'sendOTP');
     });
+
+    Route::post('/forgot-password', [AuthController::class, 'sendResetOtp']);
+    Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
     // Protected routes of product and logout
     Route::middleware('auth:sanctum')->group(function () {
