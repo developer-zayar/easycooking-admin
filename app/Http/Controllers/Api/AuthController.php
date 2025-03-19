@@ -296,7 +296,8 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+            $response = new ApiResponse(false, $validator->errors()->first());
+            return response()->json($response);
         }
 
         $user = User::where('email', $request->email)->first();
@@ -312,7 +313,8 @@ class AuthController extends Controller
             $message->to($user->email)->subject('Password Reset OTP');
         });
 
-        return response()->json(['success' => true, 'message' => 'OTP sent to your email.']);
+        $response = new ApiResponse(true, 'OTP sent to your email.');
+        return response()->json($response);
     }
 
     /**
@@ -326,16 +328,19 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+            $response = new ApiResponse(false, $validator->errors()->first());
+            return response()->json($response);
         }
 
         $user = User::where('email', $request->email)->where('otp', $request->otp)->first();
 
         if (!$user || now()->greaterThan($user->otp_expires_at)) {
-            return response()->json(['success' => false, 'message' => 'Invalid or expired OTP.']);
+            $response = new ApiResponse(false, 'Invalid or expired OTP.');
+            return response()->json($response);
         }
 
-        return response()->json(['success' => true, 'message' => 'OTP verified.']);
+        $response = new ApiResponse(true, 'OTP verified successfully.');
+        return response()->json($response);
     }
 
     /**
@@ -350,13 +355,15 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+            $response = new ApiResponse(false, $validator->errors()->first());
+            return response()->json($response);
         }
 
         $user = User::where('email', $request->email)->where('otp', $request->otp)->first();
 
         if (!$user || now()->greaterThan($user->otp_expires_at)) {
-            return response()->json(['success' => false, 'message' => 'Invalid or expired OTP.']);
+            $response = new ApiResponse(false, 'Invalid or expired OTP.');
+            return response()->json($response);
         }
 
         // Update password
@@ -365,7 +372,8 @@ class AuthController extends Controller
         $user->otp_expires_at = null;
         $user->save();
 
-        return response()->json(['success' => true, 'message' => 'Password reset successfully.']);
+        $response = new ApiResponse(true, 'Password reset successfully.');
+        return response()->json($response);
     }
 
 }
