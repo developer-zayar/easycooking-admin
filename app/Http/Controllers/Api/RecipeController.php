@@ -73,14 +73,17 @@ class RecipeController extends Controller
      */
     public function show($id)
     {
-        if (!ctype_digit($id)) {
-            $response = new ApiResponse(false, 'Invalid ID');
-            return response()->json($response);
-        }
+        // if (!ctype_digit($id)) {
+        //     $response = new ApiResponse(false, 'Invalid ID');
+        //     return response()->json($response);
+        // }
+
+        $query = is_numeric($id) ? ['id' => $id] : ['slug' => $id];
 
         $recipe = Recipe::with('category')
             ->with(['images', 'reviews'])
-            ->find($id);
+            ->where($query)
+            ->first();
 
         if (!$recipe) {
             $response = new ApiResponse(false, 'Item not found', $recipe);

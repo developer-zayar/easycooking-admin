@@ -112,16 +112,24 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        if (!ctype_digit($id)) {
-            $response = new ApiResponse(false, 'Invalid ID');
-            return response()->json($response);
-        }
+        // if (!ctype_digit($id)) {
+        //     $response = new ApiResponse(false, 'Invalid ID');
+        //     return response()->json($response);
+        // }
+
+        $query = is_numeric($id) ? ['id' => $id] : ['slug' => $id];
 
         $post = Post::find($id)
-            ->with(['images'])
+            ->with([
+                'images',
+                'reviews' => function ($query) {
+                    $query->latest()->take(5)->with('user:id,name,image');
+                }
+            ])
             ->withCount('reviews', 'likes')
             ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
-            ->find($id);
+            ->where($query)
+            ->first();
 
         if (!$post) {
             $response = new ApiResponse(false, 'Item not found', $post);
