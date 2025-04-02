@@ -117,11 +117,15 @@ class PostController extends Controller
         //     return response()->json($response);
         // }
 
-        $query = is_numeric($id) ? ['id' => $id] : ['slug' => $id];
+        $query = ctype_digit($id) ? ['id' => $id] : ['slug' => $id];
 
-        $post = Post::find($id)
-            ->with([
+        $post = Post //::find($id)
+            ::with([
                 'images',
+                'recipes' => function ($query) {
+                    $query->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
+                        ->with('category');
+                },
                 'reviews' => function ($query) {
                     $query->latest()->take(5)->with('user:id,name,image');
                 }
