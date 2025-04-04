@@ -1,7 +1,9 @@
 <?php
 
+use OpenAdmin\Admin\Admin;
 use Illuminate\Routing\Router;
 use App\Admin\Controllers\AppSettingController;
+use App\Admin\Controllers\CategoryController;
 
 Admin::routes();
 
@@ -14,5 +16,5 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('app-settings', AppSettingController::class);
-
+    $router->resource('categories', CategoryController::class);
 });
