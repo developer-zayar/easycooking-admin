@@ -116,7 +116,7 @@ return [
 
         'guards' => [
             'admin' => [
-                'driver'   => 'session',
+                'driver' => 'session',
                 'provider' => 'admin',
             ],
         ],
@@ -124,7 +124,7 @@ return [
         'providers' => [
             'admin' => [
                 'driver' => 'eloquent',
-                'model'  => OpenAdmin\Admin\Auth\Database\Administrator::class,
+                'model' => OpenAdmin\Admin\Auth\Database\Administrator::class,
             ],
         ],
 
@@ -135,9 +135,9 @@ return [
         'redirect_to' => 'auth/login',
 
         // Protect agaist brute force attacks
-        'throttle_logins'   => true,
+        'throttle_logins' => true,
         'throttle_attempts' => 5,
-        'throttle_timeout'  => 900, // in seconds
+        'throttle_timeout' => 900, // in seconds
 
         // The URIs that should be excluded from authorization.
         'excepts' => [
@@ -163,7 +163,7 @@ return [
         // Image and file upload path under the disk above.
         'directory' => [
             'image' => 'images',
-            'file'  => 'files',
+            'file' => 'files',
         ],
     ],
 
@@ -197,11 +197,11 @@ return [
         'menu_model' => OpenAdmin\Admin\Auth\Database\Menu::class,
 
         // Pivot table for table above.
-        'operation_log_table'    => 'admin_operation_log',
+        'operation_log_table' => 'admin_operation_log',
         'user_permissions_table' => 'admin_user_permissions',
-        'role_users_table'       => 'admin_role_users',
+        'role_users_table' => 'admin_role_users',
         'role_permissions_table' => 'admin_role_permissions',
-        'role_menu_table'        => 'admin_role_menu',
+        'role_menu_table' => 'admin_role_menu',
     ],
 
     /*
@@ -228,15 +228,15 @@ return [
          * or specific method to path like: get:admin/auth/logs.
          */
         'except' => [
-            env('ADMIN_ROUTE_PREFIX', 'admin').'/auth/logs*',
+            env('ADMIN_ROUTE_PREFIX', 'admin') . '/auth/logs*',
         ],
 
         /*
          * Replace input fields that should not be logged
          */
         'filter_input' => [
-            'token'             => '*****-filtered-out-*****',
-            'password'          => '*****-filtered-out-*****',
+            'token' => '*****-filtered-out-*****',
+            'password' => '*****-filtered-out-*****',
             'password_remember' => '*****-filtered-out-*****',
         ],
     ],
@@ -410,6 +410,16 @@ return [
     |
     */
     'extensions' => [
+        'ckeditor' => [
 
+            //Set to false if you want to disable this extension
+            'enable' => true,
+
+            // Editor configuration
+            'config' => [
+                'height' => 500,
+                // 'contentsCss' => '/css/frontend-body-content.css',
+            ]
+        ]
     ],
 ];

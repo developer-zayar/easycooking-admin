@@ -66,7 +66,7 @@ class AppSettingController extends AdminController
         $form = new Form(new AppSetting());
 
         $form->text('key', __('Key'));
-        $form->text('value', __('Value'));
+        $form->textarea('value', __('Value'))->rows(10);
         $form->text('remark', __('Remark'));
 
         return $form;
