@@ -419,6 +419,9 @@ return [
             'config' => [
                 'height' => 500,
                 // 'contentsCss' => '/css/frontend-body-content.css',
+                'skin' => 'office2013',
+                // 'extraPlugins' => 'easyimage',
+                'extraPlugins' => 'justify',
             ]
         ]
     ],
