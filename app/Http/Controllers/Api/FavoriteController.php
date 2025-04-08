@@ -68,6 +68,12 @@ class FavoriteController extends Controller
                 'favoritable_id' => $id,
                 'favoritable_type' => $modelClass,
             ]);
+
+            // If newly created, increase fav_count
+            if ($favorite->wasRecentlyCreated && $type === 'recipe') {
+                $modelClass::where('id', $id)->increment('fav_count');
+            }
+
             $favorites[] = $favorite;
         }
 

@@ -418,10 +418,16 @@ return [
             // Editor configuration
             'config' => [
                 'height' => 500,
+                'allowedContent' => true,
+                'extraAllowedContent' => '*(*);*{*}',
+                // 'enterMode' => 2,
+                // 'shiftEnterMode' => 2,
+                'autoParagraph' => false,
+                'removePlugins' => 'elementspath',
                 // 'contentsCss' => '/css/frontend-body-content.css',
-                'skin' => 'office2013',
+                // 'skin' => 'office2013',
                 // 'extraPlugins' => 'easyimage',
-                'extraPlugins' => 'justify',
+                'extraPlugins' => ['justify', 'font', 'find', 'emoji', 'colorbutton', 'preview',],
             ]
         ]
     ],

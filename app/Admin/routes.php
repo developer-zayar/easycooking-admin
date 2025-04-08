@@ -4,6 +4,7 @@ use Illuminate\Routing\Router;
 use App\Admin\Controllers\AppSettingController;
 use App\Admin\Controllers\CategoryController;
 use App\Admin\Controllers\PostController;
+use App\Admin\Controllers\RecipeController;
 
 Admin::routes();
 
@@ -18,4 +19,5 @@ Route::group([
     $router->resource('app-settings', AppSettingController::class);
     $router->resource('categories', CategoryController::class);
     $router->resource('posts', PostController::class);
+    $router->resource('recipes', RecipeController::class);
 });
