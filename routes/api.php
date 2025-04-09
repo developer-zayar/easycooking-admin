@@ -61,6 +61,8 @@ Route::middleware(['apikey'])->group(function () {
     // PostReview
     Route::get('/posts/{id}/reviews', [PostReviewController::class, 'index']);
 
+    Route::post('/favorites/{type}/add', [FavoriteController::class, 'addFavorite']);
+
     // Feedback
     Route::apiResource('feedback', FeedbackController::class);
 
@@ -106,7 +108,6 @@ Route::middleware(['apikey'])->group(function () {
 
         // Favorites
         // Route::post('/favorites/{type}/{id}', [FavoriteController::class, 'toggleFavorite']);
-        Route::post('/favorites/{type}', [FavoriteController::class, 'addFavorite']);
         Route::post('/favorites/{type}/remove', [FavoriteController::class, 'removeFavorite']);
         Route::get('/favorites/posts', [FavoriteController::class, 'getFavoritePosts']);
         Route::get('/favorites/recipes', [FavoriteController::class, 'getFavoriteRecipes']);

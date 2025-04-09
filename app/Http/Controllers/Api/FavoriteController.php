@@ -63,21 +63,34 @@ class FavoriteController extends Controller
 
         $favorites = [];
         foreach ($request->ids as $id) {
-            $favorite = Favorite::firstOrCreate([
-                'user_id' => $user->id,
-                'favoritable_id' => $id,
-                'favoritable_type' => $modelClass,
-            ]);
+            if ($user) {
+                $favorite = Favorite::firstOrCreate([
+                    'user_id' => $user->id,
+                    'favoritable_id' => $id,
+                    'favoritable_type' => $modelClass,
+                ]);
 
-            // If newly created, increase fav_count
-            if ($favorite->wasRecentlyCreated && $type === 'recipe') {
-                $modelClass::where('id', $id)->increment('fav_count');
+                // If newly created, increase fav_count
+                if ($favorite->wasRecentlyCreated && $type === 'recipe') {
+                    $modelClass::where('id', $id)->increment('fav_count');
+                }
+
+                $favorites[] = $favorite;
+
+            } else {
+                // Only increment fav_count for guests
+                if ($type === 'recipe') {
+                    $modelClass::where('id', $id)->increment('fav_count');
+                }
+
+                $updatedModel = $modelClass::find($id);
+                $favorites[] = $updatedModel;
             }
-
-            $favorites[] = $favorite;
         }
 
-        $response = new ApiResponse(true, ucfirst($type) . ' added to favorites', $favorites);
+        $message = ucfirst($type) . ' added to favorites';
+        $data = $user ? $favorites : [];
+        $response = new ApiResponse(true, $message, $data);
         return response()->json($response);
     }
 
