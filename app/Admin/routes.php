@@ -5,6 +5,8 @@ use App\Admin\Controllers\AppSettingController;
 use App\Admin\Controllers\CategoryController;
 use App\Admin\Controllers\PostController;
 use App\Admin\Controllers\RecipeController;
+use App\Admin\Controllers\PostImageController;
+use App\Admin\Controllers\RecipeImageController;
 
 Admin::routes();
 
@@ -19,5 +21,7 @@ Route::group([
     $router->resource('app-settings', AppSettingController::class);
     $router->resource('categories', CategoryController::class);
     $router->resource('posts', PostController::class);
+    $router->resource('post-images', PostImageController::class);
     $router->resource('recipes', RecipeController::class);
+    $router->resource('recipe-images', RecipeImageController::class);
 });
