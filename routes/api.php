@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AppSettingController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\NoEatController;
+use App\Http\Controllers\Api\CalorieItemController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\PostReviewController;
 use App\Http\Controllers\Api\RecipeController;
@@ -53,6 +54,9 @@ Route::middleware(['apikey'])->group(function () {
 
     // NoEat
     Route::apiResource('noeat', NoEatController::class);
+
+    // CalorieItem
+    Route::apiResource('calorie-items', CalorieItemController::class);
 
     // Post
     Route::get('/posts/search', [PostController::class, 'search']);
