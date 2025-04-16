@@ -9,6 +9,9 @@ use App\Models\User;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
 use Validator;
 use Mail;
 
@@ -177,17 +180,52 @@ class AuthController extends Controller
         return response()->json($response, 200);
     }
 
-    public function updateUser(Request $request)
+    public function updateProfile(Request $request)
     {
         $attr = $request->validate([
             'name' => 'required|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,svg,gif|max:2048',
         ]);
 
-        $imageUrl = $this->saveImage($request->image, 'profiles');
+        $user = auth()->user();
+        $imagePath = $user->image;
 
-        auth()->user()->update([
+        // $imageUrl = $this->saveImage($request->image, 'profiles');
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            // Generate clean image name from email
+            $emailSlug = Str::slug(pathinfo($user->email, PATHINFO_FILENAME));
+            // $extension = $image->getClientOriginalExtension();
+            // $fileName = $emailSlug . '.' . $extension;
+            $fileName = $emailSlug . '.png';
+            $relativePath = "profiles/$fileName";
+            $fullPath = public_path($relativePath);
+
+            // Ensure the profiles directory exists
+            $directory = public_path('profiles');
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            // Delete old image if it exists
+            if (File::exists($fullPath)) {
+                File::delete($fullPath);
+            }
+
+            // Resize and save image to profiles/
+            $img = Image::make($image->path());
+            $img->fit(100, 100, function ($const) {
+                $const->aspectRatio();
+            })->save($fullPath);
+
+            $imagePath = $relativePath; // e.g., profiles/john-doe.jpg
+        }
+
+        $user->update([
             'name' => $attr['name'],
-            'image' => $imageUrl,
+            'image' => $imagePath,
         ]);
 
         $response = new ApiResponse(true, 'User updated successfully.', auth()->user());

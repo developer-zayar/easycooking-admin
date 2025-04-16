@@ -203,10 +203,10 @@ class RecipeController extends Controller
 
         $recipes = Recipe::with('category')
             ->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
-            // ->whereHas('category', function ($query) {
-            //     $query->where('id', 1000);
-            // })
-            ->where('category_id', '=', 1000)
+            ->whereHas('category', function ($query) {
+                $query->where('type', 2);
+            })
+            // ->where('category_id', '=', 1000)
             ->orderBy('created_at', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
         // ->take(10)
