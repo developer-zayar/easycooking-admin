@@ -221,14 +221,19 @@ class AuthController extends Controller
             })->save($fullPath);
 
             $imagePath = $relativePath; // e.g., profiles/john-doe.jpg
+
+            $user->update([
+                'image' => $imagePath,
+            ]);
         }
 
         $user->update([
-            'name' => $attr['name'],
-            'image' => $imagePath,
+            'name' => $attr['name']
         ]);
 
-        $response = new ApiResponse(true, 'User updated successfully.', auth()->user());
+        $data['user'] = $user;
+
+        $response = new ApiResponse(true, 'User updated successfully.', $data);
         return response()->json($response, 200);
 
     }
