@@ -25,3 +25,7 @@ Route::group([
     $router->resource('recipes', RecipeController::class);
     $router->resource('recipe-images', RecipeImageController::class);
 });
+
+if(config('app.env') === 'production') {
+    URL::forceScheme('https');
+}
