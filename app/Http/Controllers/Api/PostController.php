@@ -234,7 +234,12 @@ class PostController extends Controller
         }
 
         $like->is_save = 0; // Toggle the is_save attribute
-        $like->save();
+        if ($like instanceof PostLike) {
+            $like->save();
+        } else {
+            $response = new ApiResponse(false, 'Unable to update save status.');
+            return response()->json($response);
+        }
 
         $response = new ApiResponse(true, 'UnSaved:' . $post->id);
         return response()->json($response);

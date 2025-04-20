@@ -1,5 +1,6 @@
 <?php
 
+use OpenAdmin\Admin\Facades\Admin;
 use Illuminate\Routing\Router;
 use App\Admin\Controllers\AppSettingController;
 use App\Admin\Controllers\CategoryController;
