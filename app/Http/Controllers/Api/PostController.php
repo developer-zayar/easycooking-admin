@@ -21,6 +21,7 @@ class PostController extends Controller
 
         if (auth()->user() == null) {
             $posts = Post::with(['images'])
+                ->select('id', 'title', 'slug', 'view_count', 'created_at', 'updated_at')
                 ->withCount('reviews', 'likes')
                 ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
                 // ->selectRaw('(SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) as average_rating')
@@ -29,6 +30,7 @@ class PostController extends Controller
             // ->simplePaginate(20);
         } else {
             $posts = Post::with(['images'])
+                ->select('id', 'title', 'slug', 'view_count', 'created_at', 'updated_at')
                 ->withCount('reviews', 'likes')
                 ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
                 ->with('likes', function ($like) {
@@ -63,6 +65,7 @@ class PostController extends Controller
 
         if (auth()->user() == null) {
             $posts = Post::with(['images'])
+                ->select('id', 'title', 'slug', 'view_count', 'created_at', 'updated_at')
                 ->withCount('reviews', 'likes')
                 ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
                 ->where(function ($q) use ($query) {
@@ -73,6 +76,7 @@ class PostController extends Controller
                 ->paginate($perPage, ['*'], 'page', $page);
         } else {
             $posts = Post::with(['images'])
+                ->select('id', 'title', 'slug', 'view_count', 'created_at', 'updated_at')
                 ->withCount('reviews', 'likes')
                 ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
                 ->with('likes', function ($like) {
@@ -112,14 +116,7 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        // if (!ctype_digit($id)) {
-        //     $response = new ApiResponse(false, 'Invalid ID');
-        //     return response()->json($response);
-        // }
-
-        $query = ctype_digit($id) ? ['id' => $id] : ['slug' => $id];
-
-        $post = Post //::find($id)
+        $post = Post::find($id)
             ::with([
                 'images',
                 'recipes' => function ($query) {
@@ -132,7 +129,6 @@ class PostController extends Controller
             ])
             ->withCount('reviews', 'likes')
             ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
-            ->where($query)
             ->first();
 
         if (!$post) {
@@ -142,6 +138,30 @@ class PostController extends Controller
 
         $response = new ApiResponse(true, 'post details', $post);
         return response()->json($response);
+    }
+
+    public function showBySlug($slug)
+    {
+        $post = Post::with([
+            'images',
+            'recipes' => function ($query) {
+                $query->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
+                    ->with('category');
+            },
+            'reviews' => function ($query) {
+                $query->latest()->take(5)->with('user:id,name,image');
+            }
+        ])
+            ->withCount(['reviews', 'likes'])
+            ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
+            ->where('slug', $slug)
+            ->first();
+
+        if (!$post) {
+            return response()->json(new ApiResponse(false, 'Post not found by slug', null));
+        }
+
+        return response()->json(new ApiResponse(true, 'Post details by slug', $post));
     }
 
     /**
@@ -219,16 +239,6 @@ class PostController extends Controller
         $response = new ApiResponse(true, 'UnSaved:' . $post->id);
         return response()->json($response);
 
-    }
-
-    public function getCalorieContent()
-    {
-        $post = Post::find();
-
-        if (!$post) {
-            $response = new ApiResponse(false, 'Post not found.');
-            return response()->json($response);
-        }
     }
 
 }

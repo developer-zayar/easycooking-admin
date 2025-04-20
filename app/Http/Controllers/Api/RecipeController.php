@@ -73,17 +73,7 @@ class RecipeController extends Controller
      */
     public function show($id)
     {
-        // if (!ctype_digit($id)) {
-        //     $response = new ApiResponse(false, 'Invalid ID');
-        //     return response()->json($response);
-        // }
-
-        $query = is_numeric($id) ? ['id' => $id] : ['slug' => $id];
-
-        $recipe = Recipe::with('category')
-            ->with(['images', 'reviews'])
-            ->where($query)
-            ->first();
+        $recipe = Recipe::with(['category', 'images', 'reviews'])->find($id);
 
         if (!$recipe) {
             $response = new ApiResponse(false, 'Item not found', $recipe);
@@ -92,6 +82,19 @@ class RecipeController extends Controller
 
         $response = new ApiResponse(true, 'recipe details', $recipe);
         return response()->json($response);
+    }
+
+    public function showBySlug($slug)
+    {
+        $recipe = Recipe::with(['category', 'images', 'reviews'])
+            ->where('slug', $slug)
+            ->first();
+
+        if (!$recipe) {
+            return response()->json(new ApiResponse(false, 'Recipe not found by slug'));
+        }
+
+        return response()->json(new ApiResponse(true, 'Recipe details by slug', $recipe));
     }
 
     /**

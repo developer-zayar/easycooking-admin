@@ -44,6 +44,7 @@ Route::middleware(['apikey'])->group(function () {
     Route::get('/recipes/popular', [RecipeController::class, 'popular']);
     Route::get('/recipes/cooking_knowledge', [RecipeController::class, 'cookingKnowledge']);
     Route::get('/recipes/{id}', [RecipeController::class, 'show']);
+    Route::get('/recipes/slug/{slug}', [RecipeController::class, 'showBySlug']);
     Route::get('/recipes/category/{category_id}', [RecipeController::class, 'getRecipeByCategoryId']);
 
     // Recipe review
@@ -61,6 +62,7 @@ Route::middleware(['apikey'])->group(function () {
     // Post
     Route::get('/posts/search', [PostController::class, 'search']);
     Route::apiResource('posts', PostController::class);
+    Route::get('/posts/slug/{slug}', [PostController::class, 'showBySlug']);
 
     // PostReview
     Route::get('/posts/{id}/reviews', [PostReviewController::class, 'index']);
