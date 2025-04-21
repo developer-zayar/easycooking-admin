@@ -218,7 +218,7 @@ class AuthController extends Controller
             Storage::disk('profiles')->put($fileName, $resizedImage);
 
             // Update image path in database
-            $user->image = URL::to('/') . '/storage/profiles/' . $fileName; //Storage::disk('profiles')->url($fileName);
+            $user->image = Storage::disk('profiles')->url($fileName);
 
             // $relativePath = "profiles/$fileName";
             // $fullPath = public_path($relativePath);
