@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use Validator;
 use Mail;
+use Storage;
+use URL;
 
 class AuthController extends Controller
 {
@@ -200,36 +202,54 @@ class AuthController extends Controller
             // $extension = $image->getClientOriginalExtension();
             // $fileName = $emailSlug . '.' . $extension;
             $fileName = $emailSlug . '.png';
-            $relativePath = "profiles/$fileName";
-            $fullPath = public_path($relativePath);
 
-            // Ensure the profiles directory exists
-            $directory = public_path('profiles');
-            if (!File::exists($directory)) {
-                File::makeDirectory($directory, 0755, true);
+            // Resize the image using Intervention
+            $resizedImage = Image::make($image->path())
+                ->fit(100, 100, function ($const) {
+                    $const->aspectRatio();
+                })->encode('png');
+
+            // Optionally delete old file (only if you store old image name)
+            if ($user->image && Storage::disk('profiles')->exists(basename($fileName))) {
+                Storage::disk('profiles')->delete(basename($fileName));
             }
 
-            // Delete old image if it exists
-            if (File::exists($fullPath)) {
-                File::delete($fullPath);
-            }
+            // Save to storage disk 'profiles'
+            Storage::disk('profiles')->put($fileName, $resizedImage);
 
-            // Resize and save image to profiles/
-            $img = Image::make($image->path());
-            $img->fit(100, 100, function ($const) {
-                $const->aspectRatio();
-            })->save($fullPath);
+            // Update image path in database
+            $user->image = URL::to('/') . '/storage/profiles/' . $fileName; //Storage::disk('profiles')->url($fileName);
 
-            $imagePath = $relativePath; // e.g., profiles/john-doe.jpg
+            // $relativePath = "profiles/$fileName";
+            // $fullPath = public_path($relativePath);
 
-            $user->update([
-                'image' => $imagePath,
-            ]);
+            // // Ensure the profiles directory exists
+            // $directory = public_path('profiles');
+            // if (!File::exists($directory)) {
+            //     File::makeDirectory($directory, 0755, true);
+            // }
+
+            // // Delete old image if it exists
+            // if (File::exists($fullPath)) {
+            //     File::delete($fullPath);
+            // }
+
+            // // Resize and save image to profiles/
+            // $img = Image::make($image->path());
+            // $img->fit(100, 100, function ($const) {
+            //     $const->aspectRatio();
+            // })->save($fullPath);
+
+            // $imagePath = $relativePath; // e.g., profiles/john-doe.jpg
+
+            // $user->update([
+            //     'image' => $imagePath,
+            // ]);
         }
 
-        $user->update([
-            'name' => $attr['name']
-        ]);
+        // Update name
+        $user->name = $attr['name'];
+        $user->save();
 
         $data['user'] = $user;
 
