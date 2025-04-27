@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Response\ApiResponse;
 use App\Models\Post;
 use App\Models\PostLike;
-use DB;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -116,25 +115,26 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        $post = Post::find($id)
-            ::with([
-                'images',
-                'recipes' => function ($query) {
-                    $query->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
-                        ->with('category');
-                },
-                'reviews' => function ($query) {
-                    $query->latest()->take(5)->with('user:id,name,image');
-                }
-            ])
+        $post = Post::with([
+            'images',
+            'recipes' => function ($query) {
+                $query->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
+                    ->with('category');
+            },
+            'reviews' => function ($query) {
+                $query->latest()->take(5)->with('user:id,name,image');
+            }
+        ])
             ->withCount('reviews', 'likes')
             ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
-            ->first();
+            ->find($id);
 
         if (!$post) {
             $response = new ApiResponse(false, 'Item not found', $post);
             return response()->json($response);
         }
+
+        $post->increment('view_count');
 
         $response = new ApiResponse(true, 'post details', $post);
         return response()->json($response);
@@ -142,6 +142,7 @@ class PostController extends Controller
 
     public function showBySlug($slug)
     {
+        info('showBySlug:' . $slug);
         $post = Post::with([
             'images',
             'recipes' => function ($query) {
@@ -154,12 +155,13 @@ class PostController extends Controller
         ])
             ->withCount(['reviews', 'likes'])
             ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
-            ->where('slug', $slug)
-            ->first();
+            ->where('slug', $slug);
 
         if (!$post) {
             return response()->json(new ApiResponse(false, 'Post not found by slug', null));
         }
+
+        $post->increment('view_count');
 
         return response()->json(new ApiResponse(true, 'Post details by slug', $post));
     }

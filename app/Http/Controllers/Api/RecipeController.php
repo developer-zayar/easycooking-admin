@@ -80,6 +80,8 @@ class RecipeController extends Controller
             return response()->json($response);
         }
 
+        $recipe->increment('view_count');
+
         $response = new ApiResponse(true, 'recipe details', $recipe);
         return response()->json($response);
     }

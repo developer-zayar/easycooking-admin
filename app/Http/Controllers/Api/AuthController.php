@@ -217,9 +217,8 @@ class AuthController extends Controller
             // Save to storage disk 'profiles'
             Storage::disk('profiles')->put($fileName, $resizedImage);
 
-            $relativePath = "profiles/$fileName";
             // Update image path in database
-            $user->image = $relativePath;
+            $user->image = $fileName;
 
             // $relativePath = "profiles/$fileName";
             // $fullPath = public_path($relativePath);
@@ -252,7 +251,7 @@ class AuthController extends Controller
         $user->name = $attr['name'];
         $user->save();
 
-        $user->image = $user->image ? asset($user->image) : null;
+        $user->image = Storage::disk('profiles')->url($user->image);
         $data['user'] = $user;
 
         $response = new ApiResponse(true, 'User updated successfully.', $data);
