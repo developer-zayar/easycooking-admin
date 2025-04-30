@@ -69,9 +69,6 @@ Route::middleware(['apikey'])->group(function () {
 
     Route::post('/favorites/{type}/add', [FavoriteController::class, 'addFavorite']);
 
-    // Feedback
-    Route::apiResource('feedback', FeedbackController::class);
-
     //Route::post('/fileupload', [GoogleFileController::class, 'store']);
     //FCM
     Route::put('update-device-token', [FCMController::class, 'updateDeviceToken']);
@@ -117,6 +114,9 @@ Route::middleware(['apikey'])->group(function () {
         Route::post('/favorites/{type}/remove', [FavoriteController::class, 'removeFavorite']);
         Route::get('/favorites/posts', [FavoriteController::class, 'getFavoritePosts']);
         Route::get('/favorites/recipes', [FavoriteController::class, 'getFavoriteRecipes']);
+
+        // Feedback
+        Route::apiResource('feedback', FeedbackController::class);
     });
 
 });

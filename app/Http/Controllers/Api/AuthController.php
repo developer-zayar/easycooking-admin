@@ -283,7 +283,7 @@ class AuthController extends Controller
             if ($request->email) {
                 $emailExists = User::where('email', $request->email)->first();
                 if ($emailExists) {
-                    $response = new ApiResponse(false, 'Account already exists');
+                    $response = new ApiResponse(false, 'This email is already registered with password.');
                     return response()->json($response);
                 }
             }
