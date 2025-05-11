@@ -28,7 +28,7 @@ class CategoryController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('name', __('Name'));
-        $grid->column('image', __('Image'));
+        $grid->column('image', __('Image'))->image('', 100,100);
         $grid->column('type', __('Type'));
         $grid->column('inactive', __('Inactive'));
         $grid->column('created_at', __('Created at'));
@@ -68,7 +68,7 @@ class CategoryController extends AdminController
         $form = new Form(new Category());
 
         $form->text('name', __('Name'));
-        $form->image('image', __('Image'));
+        $form->url('image', __('Image'));
         $form->number('type', __('Type'));
         $form->switch('inactive', __('Inactive'));
 

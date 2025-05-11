@@ -89,7 +89,7 @@ class RecipeController extends AdminController
         $form->number('category_id', __('Category id'));
         $form->number('post_id', __('Post id'));
         $form->text('name', __('Name'));
-        $form->image('image', __('Image'));
+        $form->url('image', __('Image'));
         $form->ckeditor('description', __('Description'));
         $form->textarea('instructions', __('Instructions'));
         $form->number('prep_time', __('Prep time'));
