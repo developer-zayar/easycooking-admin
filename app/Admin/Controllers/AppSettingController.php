@@ -26,9 +26,9 @@ class AppSettingController extends AdminController
     {
         $grid = new Grid(new AppSetting());
 
-        $grid->column('id', __('Id'));
-        $grid->column('key', __('Key'));
-        $grid->column('value', __('Value'));
+        $grid->column('id', __('Id'))->sortable();
+        $grid->column('key', __('Key'))->sortable();
+        $grid->column('value', __('Value'))->sortable();
         $grid->column('remark', __('Remark'));
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));

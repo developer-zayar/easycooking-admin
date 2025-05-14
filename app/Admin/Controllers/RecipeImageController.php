@@ -26,11 +26,12 @@ class RecipeImageController extends AdminController
     {
         $grid = new Grid(new RecipeImage());
 
-        $grid->column('id', __('Id'));
-        $grid->column('recipe_id', __('Recipe id'));
-        $grid->column('name', __('Name'));
+        $grid->model()->orderBy('id', 'desc');
+        $grid->column('id', __('Id'))->sortable();
+        $grid->column('recipe_id', __('Recipe id'))->sortable();
+        $grid->column('name', __('Name'))->sortable();
         $grid->column('url', __('Url'))->image();
-        $grid->column('content_type', __('Content type'));
+        $grid->column('content_type', __('Content type'))->sortable();
         $grid->column('video_id', __('Video id'));
         $grid->column('video_url', __('Video url'));
         $grid->column('created_at', __('Created at'));

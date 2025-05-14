@@ -155,7 +155,8 @@ class PostController extends Controller
         ])
             ->withCount(['reviews', 'likes'])
             ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
-            ->where('slug', $slug);
+            ->where('slug', $slug)
+            ->first();
 
         if (!$post) {
             return response()->json(new ApiResponse(false, 'Post not found by slug', null));

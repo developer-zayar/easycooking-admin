@@ -26,10 +26,11 @@ class CategoryController extends AdminController
     {
         $grid = new Grid(new Category());
 
-        $grid->column('id', __('Id'));
+        $grid->model()->orderBy('id', 'desc');
+        $grid->id('ID')->sortable();
         $grid->column('name', __('Name'));
         $grid->column('image', __('Image'))->image('', 100,100);
-        $grid->column('type', __('Type'));
+        $grid->column('type', __('Type'))->sortable();
         $grid->column('inactive', __('Inactive'));
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));

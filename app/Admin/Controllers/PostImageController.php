@@ -26,11 +26,12 @@ class PostImageController extends AdminController
     {
         $grid = new Grid(new PostImage());
 
-        $grid->column('id', __('Id'));
-        $grid->column('post_id', __('Post id'));
-        $grid->column('name', __('Name'));
+        $grid->model()->orderBy('id', 'desc');
+        $grid->column('id', __('Id'))->sortable();
+        $grid->column('post_id', __('Post id'))->sortable();
+        $grid->column('name', __('Name'))->sortable();
         $grid->column('url', __('Url'))->image();
-        $grid->column('content_type', __('Content type'));
+        $grid->column('content_type', __('Content type'))->sortable();
         $grid->column('video_id', __('Video id'));
         $grid->column('video_url', __('Video url'));
         $grid->column('created_at', __('Created at'));

@@ -26,11 +26,12 @@ class PostController extends AdminController
     {
         $grid = new Grid(new Post());
 
-        $grid->column('id', __('Id'));
+        $grid->model()->orderBy('id', 'desc');
+        $grid->column('id', __('Id'))->sortable();
         $grid->column('title', __('Title'));
-        $grid->column('slug', __('Slug'));
+        $grid->column('slug', __('Slug'))->sortable();
         $grid->column('tags', __('Tags'));
-        $grid->column('status', __('Status'));
+        $grid->column('status', __('Status'))->sortable();
         // $grid->column('content', __('Content'));
         $grid->column('view_count', __('View count'));
         $grid->column('created_at', __('Created at'));

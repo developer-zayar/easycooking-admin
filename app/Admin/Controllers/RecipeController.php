@@ -26,17 +26,18 @@ class RecipeController extends AdminController
     {
         $grid = new Grid(new Recipe());
 
-        $grid->column('id', __('Id'));
-        $grid->column('slug', __('Slug'));
-        $grid->column('category_id', __('Category id'));
-        $grid->column('post_id', __('Post id'));
+        $grid->model()->orderBy('id', 'desc');
+        $grid->column('id', __('Id'))->sortable();
+        $grid->column('slug', __('Slug'))->sortable();
+        $grid->column('category_id', __('Category id'))->sortable();
+        $grid->column('post_id', __('Post id'))->sortable();
         $grid->column('name', __('Name'));
         $grid->column('image', __('Image'))->image('', 100,100);
         // $grid->column('description', __('Description'));
         // $grid->column('instructions', __('Instructions'));
         // $grid->column('prep_time', __('Prep time'));
         // $grid->column('cook_time', __('Cook time'));
-        $grid->column('status', __('Status'));
+        $grid->column('status', __('Status'))->sortable();
         $grid->column('view_count', __('View count'));
         $grid->column('fav_count', __('Fav count'));
         $grid->column('inactive', __('Inactive'));
