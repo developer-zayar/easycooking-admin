@@ -81,6 +81,7 @@ Route::middleware(['apikey'])->group(function () {
         Route::post('/social-login', 'socialLogin');
         Route::post('/social-logout', 'socialLogout');
         Route::post('/send-otp', 'sendOTP');
+        Route::post('/request-otp', 'requestOtp');
     });
 
     Route::post('/forgot-password', [AuthController::class, 'sendResetOtp']);

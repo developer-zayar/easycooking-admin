@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LegalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', [HomeController::class, 'index']);
+Route::get('/privacy-policy', [LegalController::class, 'privacyPolicy'])->name('privacy.policy');
+Route::get('/terms-and-conditions', [LegalController::class, 'termsAndConditions'])->name('terms.conditions');
 
 Route::get('put', function () {
     Storage::disk('google')->put('images/test.txt', 'Hello World');
@@ -35,7 +38,7 @@ Route::get('get', function () {
     dd($urls);
 });
 
-Route::get('get-fileinfo', function() {
+Route::get('get-fileinfo', function () {
     // there can be duplicate file names!
     $filename = 'images/cooking.png';
 

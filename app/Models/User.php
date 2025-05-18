@@ -28,6 +28,8 @@ class User extends Authenticatable
         'device_id',
         'device_name',
         'fcm_token',
+        'otp',
+        'otp_expires_at',
     ];
 
     /**

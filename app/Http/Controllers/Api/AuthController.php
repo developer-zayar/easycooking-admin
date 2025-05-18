@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\helpers\Helpers;
 use App\Http\Response\ApiResponse;
 use App\Models\User;
-use Hash;
+use App\Mail\SendOtpMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Log;
+use Hash;
 use Validator;
 use Mail;
 use Storage;
@@ -56,15 +58,100 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
+    public function requestOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'device_id' => 'required|string',
+            'device_name' => 'nullable|string',
+        ]);
+
+        $email = $request->email;
+        $deviceId = $request->device_id;
+        $deviceName = $request->device_name;
+
+        // Check if a fully registered user already exists
+        $existingUser = User::where('email', $email)->first();
+
+        if ($existingUser && $existingUser->password) {
+            $response = new ApiResponse(false, 'Account already exists with this email.', null);
+            return response()->json($response);
+        }
+
+        $otp = rand(100000, 999999);
+
+        $user = $existingUser;
+        if ($existingUser) {
+            // Upgrade guest
+            error_log('Existing user not registered:' . $existingUser->email);
+            // $existingUser->email = $request->email;
+            $existingUser->otp = $otp;
+            $existingUser->otp_expires_at = now()->addMinutes(10);
+            $existingUser->device_id = $deviceId;
+            $existingUser->device_name = $deviceName;
+            $existingUser->save();
+        } else {
+            $user = User::where('device_id', $deviceId)
+                ->where('email', null)
+                ->first();
+            if ($user) {
+                error_log('Device registered User:' . $user->device_id);
+                $user->email = $email;
+                $user->otp = $otp;
+                $user->otp_expires_at = now()->addMinutes(10);
+                // $user->device_id = $deviceId;
+                $user->device_name = $deviceName ?? $user->device_name;
+                $user->save();
+            } else {
+                // Fresh user
+                $guestUsername = 'user_' . substr(md5(uniqid()), 0, 8);
+                error_log('Fresh User:' . $guestUsername);
+                $user = User::create([
+                    'name' => $guestUsername,
+                    'email' => $email,
+                    'otp' => $otp,
+                    'otp_expires_at' => now()->addMinutes(10),
+                    'device_id' => $deviceId,
+                    'device_name' => $deviceName,
+                ]);
+            }
+        }
+
+        Mail::to($user->email)->send(new SendOtpMail($otp));
+
+        $response = new ApiResponse(true, 'OTP sent to your email.', null);
+        return response()->json($response);
+    }
+
     public function register(Request $request)
     {
         $attr = $request->validate([
             'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email', //|unique:users,email
             'password' => 'required|min:6|confirmed',
+            'otp' => 'required|digits:6',
             'device_id' => 'string',
             'device_name' => 'string',
         ]);
+
+        $user = User::where('email', $request->email)
+            ->where('otp', $request->otp)
+            ->where('otp_expires_at', '>=', now())
+            ->first();
+
+        if (!$user) {
+            $response = new ApiResponse(false, 'Invalid or expired OTP.', null);
+            return response()->json($response);
+        }
+
+        $user->name = $request->name;
+        $user->password = Hash::make($request->password);
+        $user->otp = null;
+        $user->otp_expires_at = null;
+        $user->email_verified_at = now();
+        $user->device_id = $request->device_id;
+        $user->device_name = $request->device_name;
+        $user->save();
 
         // $loginType = filter_var($request->emailOrPhone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
@@ -75,25 +162,25 @@ class AuthController extends Controller
         //     $request->validate(['emailOrPhone' => 'unique:users,phone']);
         // }
 
-        $user = User::where('device_id', $request->device_id)->first();
-        if ($user && is_null($user->email)) {
-            // Update existing device details
-            $user->update([
-                'name' => $request->name,
-                // $loginType => $request->emailOrPhone,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'device_name' => $request->device_name,
-            ]);
-        } else {
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'device_id' => $request->device_id,
-                'device_name' => $request->device_name,
-            ]);
-        }
+        // $user = User::where('device_id', $request->device_id)->first();
+        // if ($user && is_null($user->email)) {
+        //     // Update existing device details
+        //     $user->update([
+        //         'name' => $request->name,
+        //         // $loginType => $request->emailOrPhone,
+        //         'email' => $request->email,
+        //         'password' => Hash::make($request->password),
+        //         'device_name' => $request->device_name,
+        //     ]);
+        // } else {
+        //     $user = User::create([
+        //         'name' => $request->name,
+        //         'email' => $request->email,
+        //         'password' => Hash::make($request->password),
+        //         'device_id' => $request->device_id,
+        //         'device_name' => $request->device_name,
+        //     ]);
+        // }
 
         $data['access_token'] = $user->createToken('auth_token')->plainTextToken;
         $data['token_type'] = 'Bearer';
@@ -114,6 +201,11 @@ class AuthController extends Controller
         ]);
 
         // $loginType = filter_var($request->emailOrPhone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        $existingUser = User::where('email', $request->email)->first();
+        if (!$existingUser || !$existingUser->password) {
+            $response = new ApiResponse(false, 'Account is not registered. Please register before login.', null);
+            return response()->json($response);
+        }
 
         // Attempt to log in using the correct login type (email or phone)
         $credentials = [
@@ -122,7 +214,7 @@ class AuthController extends Controller
         ];
 
         if (!Auth::attempt($credentials)) {
-            $response = new ApiResponse(false, 'Email or password is incorrect. Please try again.');
+            $response = new ApiResponse(false, 'Email or password is incorrect.\n Please try again.');
             return response()->json($response);
         }
 
@@ -220,7 +312,7 @@ class AuthController extends Controller
             Storage::disk('profiles')->put($fileName, $resizedImage);
 
             // Update image path in database
-            $user->image = Storage::disk('profiles')->url($user->image);;
+            $user->image = Storage::disk('profiles')->url($fileName);
 
             // $relativePath = "profiles/$fileName";
             // $fullPath = public_path($relativePath);
@@ -346,7 +438,7 @@ class AuthController extends Controller
         $data['access_token'] = $user->createToken('auth_token')->plainTextToken;
         $data['token_type'] = 'Bearer';
 
-        $user->image = Storage::disk('profiles')->url($user->image);
+        // $user->image = Storage::disk('profiles')->url($user->image);
         $data['user'] = $user;
 
         $response = new ApiResponse(true, 'User is logged in successfully.', $data);
