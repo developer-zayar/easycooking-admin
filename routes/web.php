@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LegalController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +23,11 @@ use App\Http\Controllers\LegalController;
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/privacy-policy', [LegalController::class, 'privacyPolicy'])->name('privacy.policy');
 Route::get('/terms-and-conditions', [LegalController::class, 'termsAndConditions'])->name('terms.conditions');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/delete-account', [AuthController::class, 'deleteAccount'])->name('account.delete');
+    Route::post('/delete-account', [AuthController::class, 'submitDeleteAccountForm'])->name('account.delete.submit');
+});
 
 Route::get('put', function () {
     Storage::disk('google')->put('images/test.txt', 'Hello World');

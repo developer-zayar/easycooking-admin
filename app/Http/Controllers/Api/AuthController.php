@@ -231,8 +231,6 @@ class AuthController extends Controller
 
         $data['access_token'] = auth()->user()->createToken('auth_token')->plainTextToken;
         $data['token_type'] = 'Bearer';
-
-        $user->image = Storage::disk('profiles')->url($user->image);
         $data['user'] = $user;
 
         $response = new ApiResponse(true, 'User is logged in successfully.', $data);
