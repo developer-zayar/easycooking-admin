@@ -16,11 +16,11 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
-Route::get('/', [HomeController::class, 'index']);
+// Route::get('/', [HomeController::class, 'index']);
 Route::get('/privacy-policy', [LegalController::class, 'privacyPolicy'])->name('privacy.policy');
 Route::get('/terms-and-conditions', [LegalController::class, 'termsAndConditions'])->name('terms.conditions');
 
@@ -55,3 +55,7 @@ Route::get('get-fileinfo', function () {
         ->header('ContentType', $file->mimeType())
         ->header('Content-Disposition', "attachment; filename=$filename");
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
