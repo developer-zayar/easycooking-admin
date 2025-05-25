@@ -27,6 +27,9 @@ Route::get('/terms-and-conditions', [LegalController::class, 'termsAndConditions
 Route::middleware(['auth'])->group(function () {
     Route::get('/delete-account', [AuthController::class, 'deleteAccount'])->name('account.delete');
     Route::post('/delete-account', [AuthController::class, 'submitDeleteAccountForm'])->name('account.delete.submit');
+    Route::get('/delete-request-sent', function () {
+        return view('account.delete-request-sent');
+    })->name('delete-request-sent');
 });
 
 Route::get('put', function () {
@@ -56,6 +59,11 @@ Route::get('get-fileinfo', function () {
         ->header('Content-Disposition', "attachment; filename=$filename");
 });
 
-Auth::routes();
+Auth::routes([
+    'register' => false,
+    'reset' => false,
+    'verify' => false,
+    'confirm' => false,
+]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

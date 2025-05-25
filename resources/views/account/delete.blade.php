@@ -8,10 +8,14 @@
 
         <form method="POST" action="{{ route('account.delete.submit') }}">
             @csrf
+            <div class="mb-3">
+                <p>Are you sure you want to delete your account?</p>
+            </div>
 
             <div class="mb-3">
                 <label for="reason" class="form-label">Reason for deletion (optional)</label>
-                <textarea id="reason" name="reason" class="form-control" rows="4">{{ old('reason') }}</textarea>
+                <textarea id="reason" name="reason" class="form-control" rows="4"
+                    placeholder="Tell us why you want to delete your account...">{{ old('reason') }}</textarea>
             </div>
 
             <div class="form-check mb-3">
@@ -21,7 +25,7 @@
                 </label>
             </div>
 
-            <button type="submit" class="btn btn-danger">Request Deletion</button>
+            <button type="submit" class="btn btn-danger">Request Account Deletion</button>
         </form>
     </div>
 @endsection
