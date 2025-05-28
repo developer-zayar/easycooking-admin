@@ -16,11 +16,11 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/', function () {
+//    return view('welcome');
+//});
 
-// Route::get('/', [HomeController::class, 'index']);
+ Route::get('/', [HomeController::class, 'index']);
 Route::get('/privacy-policy', [LegalController::class, 'privacyPolicy'])->name('privacy.policy');
 Route::get('/terms-and-conditions', [LegalController::class, 'termsAndConditions'])->name('terms.conditions');
 
