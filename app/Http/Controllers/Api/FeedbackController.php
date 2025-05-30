@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
-use App\Models\Feedback;
+use App\Http\Controllers\Controller;
 use App\Http\Response\ApiResponse;
+use App\Models\Feedback;
+use Illuminate\Http\Request;
 use Validator;
 
 class FeedbackController extends Controller

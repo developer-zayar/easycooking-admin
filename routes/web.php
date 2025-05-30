@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\RecipeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LegalController;
@@ -20,9 +22,17 @@ use App\Http\Controllers\AuthController;
 //    return view('welcome');
 //});
 
- Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index']);
+Route::get('/app-features', [HomeController::class, 'appFeatures'])->name('app.features');
+Route::get('/app-gallery', [HomeController::class, 'appGallery'])->name('app.gallery');
+Route::get('/contact', [HomeController::class, 'appGallery'])->name('contact');
 Route::get('/privacy-policy', [LegalController::class, 'privacyPolicy'])->name('privacy.policy');
 Route::get('/terms-and-conditions', [LegalController::class, 'termsAndConditions'])->name('terms.conditions');
+
+Route::get('/recipe/{slug}', [RecipeController::class, 'show'])->name('recipe.show');
+Route::get('/share/recipes/{slug}', [RecipeController::class, 'show'])->name('recipe.show');
+Route::get('/post/{slug}', [PostController::class, 'show'])->name('post.show');
+Route::get('/share/posts/{slug}', [PostController::class, 'show'])->name('post.show');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/delete-account', [AuthController::class, 'deleteAccount'])->name('account.delete');

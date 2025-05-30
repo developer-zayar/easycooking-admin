@@ -15,7 +15,7 @@
         </div>
     </div> --}}
 
-    {{-- <div class="footer-top">
+    <div class="footer-top">
         <div class="container">
             <div class="row">
 
@@ -66,7 +66,7 @@
 
             </div>
         </div>
-    </div> --}}
+    </div>
 
     <div class="container py-4">
         <div class="copyright">

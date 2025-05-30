@@ -2,15 +2,15 @@
 
 use App\Http\Controllers\Api\AppSettingController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\NoEatController;
 use App\Http\Controllers\Api\CalorieItemController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\FavoriteController;
+use App\Http\Controllers\Api\FeedbackController;
+use App\Http\Controllers\Api\NoEatController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\PostReviewController;
 use App\Http\Controllers\Api\RecipeController;
 use App\Http\Controllers\Api\RecipeReviewController;
-use App\Http\Controllers\Api\FavoriteController;
-use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FCMController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

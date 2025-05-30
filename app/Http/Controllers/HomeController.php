@@ -25,4 +25,14 @@ class HomeController extends Controller
     {
         return view('home.main');
     }
+
+    public function appFeatures()
+    {
+        return view('home.features');
+    }
+
+    public function appGallery()
+    {
+        return view('home.gallery');
+    }
 }
