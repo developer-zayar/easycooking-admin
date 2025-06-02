@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Recipe extends Model
 {
@@ -43,4 +44,12 @@ class Recipe extends Model
     {
         return $this->belongsTo(Post::class);
     }
+
+//    protected static function booted()
+//    {
+//        static::created(function ($recipe) {
+//            $recipe->slug = 'recipe-' . $recipe->id . Str::uuid();
+//            $recipe->saveQuietly();
+//        });
+//    }
 }

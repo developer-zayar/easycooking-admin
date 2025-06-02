@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use Illuminate\Support\Str;
 use OpenAdmin\Admin\Controllers\AdminController;
 use OpenAdmin\Admin\Form;
 use OpenAdmin\Admin\Grid;
@@ -53,7 +54,7 @@ class PostImageController extends AdminController
         $show->field('id', __('Id'));
         $show->field('post_id', __('Post id'));
         $show->field('name', __('Name'));
-        $show->field('url', __('Url'));
+        $show->field('url', __('Url'))->image();
         $show->field('content_type', __('Content type'));
         $show->field('video_id', __('Video id'));
         $show->field('video_url', __('Video url'));
@@ -73,11 +74,13 @@ class PostImageController extends AdminController
         $form = new Form(new PostImage());
 
         $form->number('post_id', __('Post id'));
-        $form->text('name', __('Name'));
+        $form->text('name', __('Name'))->default(Str::random(10));
         $form->url('url', __('Url'));
-        $form->text('content_type', __('Content type'));
+        $form->select('content_type', __('Content type'))
+            ->options(['image' => 'Image', 'youtube' => 'Youtube'])
+            ->default('image');
         $form->text('video_id', __('Video id'));
-        $form->text('video_url', __('Video url'));
+        $form->url('video_url', __('Video url'));
 
         return $form;
     }

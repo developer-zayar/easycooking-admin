@@ -2,6 +2,9 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Category;
+use App\Models\Post;
+use Illuminate\Support\Str;
 use OpenAdmin\Admin\Controllers\AdminController;
 use OpenAdmin\Admin\Form;
 use OpenAdmin\Admin\Grid;
@@ -26,13 +29,16 @@ class RecipeController extends AdminController
     {
         $grid = new Grid(new Recipe());
 
+        $grid->quickSearch('name');
         $grid->model()->orderBy('id', 'desc');
         $grid->column('id', __('Id'))->sortable();
         $grid->column('slug', __('Slug'))->sortable();
-        $grid->column('category_id', __('Category id'))->sortable();
-        $grid->column('post_id', __('Post id'))->sortable();
         $grid->column('name', __('Name'));
-        $grid->column('image', __('Image'))->image('', 100,100);
+        $grid->column('image', __('Image'))->image('', 100, 100);
+        $grid->column('category_id', __('Category id'))->sortable()->hide();
+        $grid->column('category.name')->sortable();
+        $grid->column('post_id', __('Post id'))->sortable()->hide();
+        $grid->column('post.title')->sortable();
         // $grid->column('description', __('Description'));
         // $grid->column('instructions', __('Instructions'));
         // $grid->column('prep_time', __('Prep time'));
@@ -41,8 +47,8 @@ class RecipeController extends AdminController
         $grid->column('view_count', __('View count'));
         $grid->column('fav_count', __('Fav count'));
         $grid->column('inactive', __('Inactive'));
-        $grid->column('created_at', __('Created at'))->dateFormat('Y-m-d H:i:s');
-        $grid->column('updated_at', __('Updated at'))->dateFormat('Y-m-d H:i:s');
+        $grid->column('created_at', __('Created at'))->dateFormat('Y-m-d H:i:s')->sortable();
+        $grid->column('updated_at', __('Updated at'))->dateFormat('Y-m-d H:i:s')->sortable();
 
         return $grid;
     }
@@ -62,7 +68,7 @@ class RecipeController extends AdminController
         $show->field('category_id', __('Category id'));
         $show->field('post_id', __('Post id'));
         $show->field('name', __('Name'));
-        $show->field('image', __('Image'));
+        $show->field('image', __('Image'))->image();
         $show->field('description', __('Description'));
         $show->field('instructions', __('Instructions'));
         $show->field('prep_time', __('Prep time'));
@@ -86,19 +92,43 @@ class RecipeController extends AdminController
     {
         $form = new Form(new Recipe());
 
-        $form->text('slug', __('Slug'));
-        $form->number('category_id', __('Category id'));
-        $form->number('post_id', __('Post id'));
+        $form->number('id', 'ID');
+        $form->text('slug', __('Slug'))
+            ->default(function ($form) {
+                return 'recipe-' . Str::random(10);
+            });
+//        $form->display('category_id', __('Category Id'));
+        $form->select('category_id', __('Category'))
+            ->options(Category::all()->pluck('name', 'id')->prepend('Default', 0))
+            ->default(0);
+//        $form->display('post_id', __('Post Id'));
+        $form->select('post_id', __('Post'))
+            ->options(Post::all()->pluck('title', 'id')->prepend('Default', 0))
+            ->default(0);
         $form->text('name', __('Name'));
         $form->url('image', __('Image'));
         $form->ckeditor('description', __('Description'));
         $form->textarea('instructions', __('Instructions'));
         $form->number('prep_time', __('Prep time'));
         $form->number('cook_time', __('Cook time'));
-        $form->text('status', __('Status'))->default('draft');
+//        $form->text('status', __('Status'))->default('draft'); //'draft', 'published', 'archived'
+        $form->select('status', 'Status')
+            ->options(['published' => 'published', 'draft' => 'draft', 'archived' => 'archived'])
+            ->default('published');
         $form->number('view_count', __('View count'))->default(1);
-        $form->number('fav_count', __('Fav count'));
+        $form->number('fav_count', __('Fav count'))->default(1);
         $form->switch('inactive', __('Inactive'));
+
+        $form->hasMany('images', 'Recipe Images', function (Form\NestedForm $form) {
+            $form->text('name', __('Name'))
+                ->default(Str::random(10));
+            $form->url('url', __('Url'));
+            $form->select('content_type', __('Content type'))
+                ->options(['image' => 'Image', 'youtube' => 'Youtube'])
+                ->default('image');
+            $form->text('video_id', __('Video id'));
+            $form->url('video_url', __('Video url'));
+        });
 
         return $form;
     }

@@ -26,10 +26,11 @@ class CategoryController extends AdminController
     {
         $grid = new Grid(new Category());
 
+        $grid->quickSearch('name');
         $grid->model()->orderBy('id', 'desc');
         $grid->id('ID')->sortable();
-        $grid->column('name', __('Name'));
-        $grid->column('image', __('Image'))->image('', 100,100);
+        $grid->column('name', __('Name'))->sortable();
+        $grid->column('image', __('Image'))->image('', 100, 100);
         $grid->column('type', __('Type'))->sortable();
         $grid->column('inactive', __('Inactive'));
         $grid->column('created_at', __('Created at'));
@@ -68,9 +69,12 @@ class CategoryController extends AdminController
     {
         $form = new Form(new Category());
 
+        $form->number('id', 'ID');
         $form->text('name', __('Name'));
         $form->url('image', __('Image'));
-        $form->number('type', __('Type'));
+        $form->select('type', __('Type'))
+            ->options([0 => 'Recipe', 1 => 'Snack', 2 => 'Kitchen Help'])
+            ->default(0);
         $form->switch('inactive', __('Inactive'));
 
         return $form;

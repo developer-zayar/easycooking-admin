@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use Illuminate\Support\Str;
 use OpenAdmin\Admin\Controllers\AdminController;
 use OpenAdmin\Admin\Form;
 use OpenAdmin\Admin\Grid;
@@ -26,14 +27,15 @@ class PostController extends AdminController
     {
         $grid = new Grid(new Post());
 
+        $grid->quickSearch('title');
         $grid->model()->orderBy('id', 'desc');
         $grid->column('id', __('Id'))->sortable();
-        $grid->column('title', __('Title'));
         $grid->column('slug', __('Slug'))->sortable();
+        $grid->column('title', __('Title'));
         $grid->column('tags', __('Tags'));
         $grid->column('status', __('Status'))->sortable();
         // $grid->column('content', __('Content'));
-        $grid->column('view_count', __('View count'));
+        $grid->column('view_count', __('View count'))->sortable();
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
 
@@ -72,12 +74,29 @@ class PostController extends AdminController
     {
         $form = new Form(new Post());
 
+        $form->number('id', 'ID');
+        $form->textarea('slug', __('Slug'))
+            ->default(function ($form) {
+                return 'post-' . Str::random(10);
+            });
         $form->text('title', __('Title'));
-        $form->textarea('slug', __('Slug'));
         $form->text('tags', __('Tags'));
-        $form->text('status', __('Status'))->default('draft');
         $form->ckeditor('content', __('Content'));
+        $form->text('status', __('Status'))->default('draft')
+            ->options(['published' => 'published', 'draft' => 'draft', 'archived' => 'archived'])
+            ->default('published');
         $form->number('view_count', __('View count'))->default(1);
+
+        $form->hasMany('images', 'Post Images', function (Form\NestedForm $imageForm) {
+            $imageForm->text('name', __('Name'))
+                ->default(Str::random(10));
+            $imageForm->url('url', __('Url'));
+            $imageForm->select('content_type', __('Content type'))
+                ->options(['image' => 'Image', 'youtube' => 'Youtube'])
+                ->default('image');
+            $imageForm->text('video_id', __('Video id'));
+            $imageForm->url('video_url', __('Video url'));
+        });
 
         return $form;
     }
