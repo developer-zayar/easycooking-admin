@@ -7,16 +7,22 @@
     <meta name="keywords" content="EasyCookingMM, recipes, cooking, Myanmar food">
     {{-- {{ implode(',', $recipe->tags ?? []) }},--}}
 
+    <!-- Facebook Meta Tags -->
     <meta property="og:title" content="{{ $recipe->name }}"/>
-    <meta property="og:description" content="{{ $recipe->slug }}"/>
+    <meta property="og:description" content="{{ env('APP_NAME', 'EasyCookingMM') }}"/>
     <meta property="og:image" content="{{  $recipe->image }}"/>
     <meta property="og:url" content="{{ url()->current() }}"/>
     <meta property="og:type" content="article"/>
 
+    <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="{{ $recipe->name }}"/>
-    <meta name="twitter:description" content="{{ $recipe->slug }}"/>
+    <meta name="twitter:description" content="{{ env('APP_NAME', 'EasyCookingMM') }}"/>
     <meta name="twitter:image" content="{{  $recipe->image }}"/>
+
+    <meta property="twitter:domain" content="easycookingmm.com">
+    <meta property="twitter:url" content="{{ url()->current() }}">
+
 @endsection
 
 @section('content')
@@ -37,16 +43,17 @@
 
         <!-- App Store & Play Store Buttons -->
         <div class="text-center my-4">
-            <a href="https://play.google.com/store/apps/details?id=com.yourapp" target="_blank">
+            <a href="https://play.google.com/store/apps/details?id=com.pas.easycooking" target="_blank">
                 <img
                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/2560px-Google_Play_Store_badge_EN.svg.png"
                     alt="Download on Google Play" style="height: 50px;">
             </a>
-            <a href="https://apps.apple.com/app/id1234567890" target="_blank">
-                <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/2560px-Download_on_the_App_Store_Badge.svg.png"
-                    alt="Download on App Store" style="height: 50px;">
-            </a>
+            {{--            <a href="https://apps.apple.com/app/id1234567890" target="_blank">--}}
+            {{--                <img--}}
+            {{--                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/2560px-Download_on_the_App_Store_Badge.svg.png"--}}
+            {{--                    alt="Download on App Store" style="height: 50px;">--}}
+            {{--            </a>--}}
+
         </div>
 
         @if($recipe->image)
