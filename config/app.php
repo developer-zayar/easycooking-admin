@@ -187,4 +187,11 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
     ])->toArray(),
 
+    'config' => [
+        'app_name' => 'EasyCookingMM',
+        'app_name_mm' => 'ချက်ကြည့်',
+        'app_description' => 'Myanmar (Burmese) Food Recipes and Kitchen Help App',
+
+    ],
+
 ];

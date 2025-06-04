@@ -3,13 +3,14 @@
 @section('title', $recipe->name)
 @section('meta')
     <meta name="title" content="{{ $recipe->name }} | EasyCookingMM">
-    <meta name="description" content="{{ $recipe->slug }}">
+    <meta name="description" content="{{ config('app.config.app_description') }}">
     <meta name="keywords" content="EasyCookingMM, recipes, cooking, Myanmar food">
     {{-- {{ implode(',', $recipe->tags ?? []) }},--}}
 
     <!-- Facebook Meta Tags -->
     <meta property="og:title" content="{{ $recipe->name }}"/>
-    <meta property="og:description" content="{{ env('APP_NAME', 'EasyCookingMM') }}"/>
+    <meta property="og:description"
+          content="{{ config('app.config.app_name_mm') }} - {{ env('APP_NAME', 'EasyCookingMM') }}"/>
     <meta property="og:image" content="{{  $recipe->image }}"/>
     <meta property="og:url" content="{{ url()->current() }}"/>
     <meta property="og:type" content="article"/>
@@ -17,7 +18,8 @@
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="{{ $recipe->name }}"/>
-    <meta name="twitter:description" content="{{ env('APP_NAME', 'EasyCookingMM') }}"/>
+    <meta name="twitter:description"
+          content="{{ config('app.config.app_name_mm') }} - {{ env('APP_NAME', 'EasyCookingMM') }}"/>
     <meta name="twitter:image" content="{{  $recipe->image }}"/>
 
     <meta property="twitter:domain" content="easycookingmm.com">

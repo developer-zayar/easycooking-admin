@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Forms\Setting;
 use App\Http\Controllers\Controller;
 use OpenAdmin\Admin\Admin;
 use OpenAdmin\Admin\Controllers\Dashboard;
@@ -32,5 +33,12 @@ class HomeController extends Controller
                     $column->append(Dashboard::dependencies());
                 });
             });
+    }
+
+    public function settings(Content $content)
+    {
+        return $content
+            ->title('Website Setting')
+            ->body(new Setting());
     }
 }
