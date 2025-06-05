@@ -33,7 +33,7 @@ Route::group([
     $router->resource('recipe-images', RecipeImageController::class);
     $router->resource('calorie-items', CalorieItemController::class);
     $router->resource('feedback', FeedbackController::class);
-    $router->get('settings', 'HomeController@settings')->name('home.settings');
+    $router->get('reset-slug', 'HomeController@resetSlug')->name('home.resetSlug');
 });
 
 if(config('app.env') === 'production') {

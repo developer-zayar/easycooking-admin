@@ -75,7 +75,7 @@ class PostController extends AdminController
         $form = new Form(new Post());
 
         $form->number('id', 'ID');
-        $form->textarea('slug', __('Slug'))
+        $form->text('slug', __('Slug'))
             ->default(function ($form) {
                 return 'post-' . Str::random(10);
             });

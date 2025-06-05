@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Forms\ResetSlug;
 use App\Admin\Forms\Setting;
 use App\Http\Controllers\Controller;
 use OpenAdmin\Admin\Admin;
@@ -35,10 +36,11 @@ class HomeController extends Controller
             });
     }
 
-    public function settings(Content $content)
+    public function resetSlug(Content $content)
     {
         return $content
-            ->title('Website Setting')
-            ->body(new Setting());
+            ->title('Reset Slug')
+            ->description('Reset slug in table...')
+            ->body(new ResetSlug());
     }
 }

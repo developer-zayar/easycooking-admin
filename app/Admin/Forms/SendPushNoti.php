@@ -3,18 +3,16 @@
 namespace App\Admin\Forms;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use OpenAdmin\Admin\Widgets\Form;
 
-class Setting extends Form
+class SendPushNoti extends Form
 {
     /**
      * The form title.
      *
      * @var string
      */
-    public $title = 'Website Settings';
+    public $title = 'Send Push Notification';
 
     /**
      * Handle the form request.
@@ -50,8 +48,8 @@ class Setting extends Form
     public function data()
     {
         return [
-            'name' => 'John Doe',
-            'email' => 'John.Doe@gmail.com',
+            'name'       => 'John Doe',
+            'email'      => 'John.Doe@gmail.com',
             'created_at' => now(),
         ];
     }
