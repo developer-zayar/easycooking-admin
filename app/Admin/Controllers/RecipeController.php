@@ -30,15 +30,19 @@ class RecipeController extends AdminController
         $grid = new Grid(new Recipe());
 
         $grid->quickSearch('name');
+        $grid->filter(function ($filter) {
+            $filter->equal('category_id', 'Category')->select(Category::all()->pluck('name', 'id')->prepend('Default Category', 0));
+            $filter->equal('post_id', 'Post')->select(Post::all()->pluck('title', 'id')->prepend('Default Post', 0));
+        });
         $grid->model()->orderBy('id', 'desc');
         $grid->column('id', __('Id'))->sortable();
         $grid->column('slug', __('Slug'))->sortable();
         $grid->column('name', __('Name'));
         $grid->column('image', __('Image'))->image('', 100, 100);
-        $grid->column('category_id', __('Category id'))->sortable()->hide();
-        $grid->column('category.name')->sortable();
-        $grid->column('post_id', __('Post id'))->sortable()->hide();
-        $grid->column('post.title')->sortable();
+        $grid->column('category_id', __('Category id'))->sortable();
+        $grid->column('category.name')->hide();
+        $grid->column('post_id', __('Post id'))->sortable();
+        $grid->column('post.title')->hide();
         // $grid->column('description', __('Description'));
         // $grid->column('instructions', __('Instructions'));
         // $grid->column('prep_time', __('Prep time'));
@@ -99,11 +103,11 @@ class RecipeController extends AdminController
             });
 //        $form->display('category_id', __('Category Id'));
         $form->select('category_id', __('Category'))
-            ->options(Category::all()->pluck('name', 'id')->prepend('Default', 0))
+            ->options(Category::all()->pluck('name', 'id')->prepend('Default Category', 0))
             ->default(0);
 //        $form->display('post_id', __('Post Id'));
         $form->select('post_id', __('Post'))
-            ->options(Post::all()->pluck('title', 'id')->prepend('Default', 0))
+            ->options(Post::all()->pluck('title', 'id')->prepend('Default Post', 0))
             ->default(0);
         $form->text('name', __('Name'));
         $form->url('image', __('Image'));

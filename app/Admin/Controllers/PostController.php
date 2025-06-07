@@ -82,7 +82,7 @@ class PostController extends AdminController
         $form->text('title', __('Title'));
         $form->text('tags', __('Tags'));
         $form->ckeditor('content', __('Content'));
-        $form->text('status', __('Status'))->default('draft')
+        $form->select('status', __('Status'))
             ->options(['published' => 'published', 'draft' => 'draft', 'archived' => 'archived'])
             ->default('published');
         $form->number('view_count', __('View count'))->default(1);

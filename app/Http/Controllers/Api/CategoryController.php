@@ -20,9 +20,10 @@ class CategoryController extends Controller
         // $categories = Category::orderBy("created_at", "desc")
         //     ->where('type', $type)
         //     ->get();
-        $categories = Category::orderBy("created_at", "desc")
+        $categories = Category::where('type', $type)
+            ->where('inactive', 0)
+            ->orderBy('created_at', 'desc')
             ->select('id', 'name', 'image')
-            ->where('type', $type)
             ->get();
 
 

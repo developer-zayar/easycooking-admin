@@ -29,6 +29,7 @@ class RecipeController extends Controller
         $recipes = Recipe::with('category')
             ->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
             ->where('category_id', $category_id)
+            ->where('inactive', 0)
             ->get();
 
         // if ($recipes->isEmpty()) {
@@ -131,7 +132,7 @@ class RecipeController extends Controller
 
         $recipes = Recipe::with('category')
             ->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
-            ->where('category_id', '<>', 1000) // Exclude category 1000
+            ->where('inactive', 0)
             ->when($query, function ($q) use ($query) {
                 $q->where('name', 'LIKE', "%{$query}%");
             })
@@ -158,7 +159,7 @@ class RecipeController extends Controller
 
         $recipes = Recipe::with('category')
             ->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
-            ->where('category_id', '<>', 1000)
+            ->where('inactive', 0)
             ->orderBy('created_at', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
         // ->take(20)
@@ -183,7 +184,7 @@ class RecipeController extends Controller
 
         $recipes = Recipe::with('category')
             ->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
-            ->where('category_id', '<>', 1000)
+            ->where('inactive', 0)
             ->orderBy('view_count', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
         // ->take(20)
@@ -208,6 +209,7 @@ class RecipeController extends Controller
 
         $recipes = Recipe::with('category')
             ->select('id', 'name', 'image', 'view_count', 'fav_count', 'category_id', 'post_id')
+            ->where('inactive', 0)
             ->whereHas('category', function ($query) {
                 $query->where('type', 2);
             })

@@ -19,7 +19,7 @@ class PostController extends Controller
         $page = $request->input('page', 1);
 
         if (auth()->user() == null) {
-            $posts = Post::with(['images'])
+            $posts = Post::published()->with(['images'])
                 ->select('id', 'title', 'slug', 'view_count', 'created_at', 'updated_at')
                 ->withCount('reviews', 'likes')
                 ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
@@ -28,7 +28,7 @@ class PostController extends Controller
                 ->paginate($perPage, ['*'], 'page', $page);
             // ->simplePaginate(20);
         } else {
-            $posts = Post::with(['images'])
+            $posts = Post::published()->with(['images'])
                 ->select('id', 'title', 'slug', 'view_count', 'created_at', 'updated_at')
                 ->withCount('reviews', 'likes')
                 ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
@@ -63,7 +63,7 @@ class PostController extends Controller
         $page = $request->input('page', 1);
 
         if (auth()->user() == null) {
-            $posts = Post::with(['images'])
+            $posts = Post::published()->with(['images'])
                 ->select('id', 'title', 'slug', 'view_count', 'created_at', 'updated_at')
                 ->withCount('reviews', 'likes')
                 ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
@@ -74,7 +74,7 @@ class PostController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->paginate($perPage, ['*'], 'page', $page);
         } else {
-            $posts = Post::with(['images'])
+            $posts = Post::published()->with(['images'])
                 ->select('id', 'title', 'slug', 'view_count', 'created_at', 'updated_at')
                 ->withCount('reviews', 'likes')
                 ->selectRaw('CAST((SELECT AVG(post_reviews.rating) FROM post_reviews WHERE post_reviews.post_id = posts.id) AS DECIMAL(10, 2)) as average_rating')
