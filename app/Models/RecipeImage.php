@@ -12,6 +12,9 @@ class RecipeImage extends Model
         'recipe_id',
         'name',
         'url',
+        'content_type',
+        'video_id',
+        'video_url',
     ];
 
     // public function images()

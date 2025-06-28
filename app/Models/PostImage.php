@@ -12,7 +12,11 @@ class PostImage extends Model
         'post_id',
         'name',
         'url',
+        'content_type',
+        'video_id',
+        'video_url',
     ];
+
     // public function images()
     // {
     //     return $this->belongsTo(Post::class);

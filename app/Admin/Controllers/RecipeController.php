@@ -123,15 +123,15 @@ class RecipeController extends AdminController
         $form->number('fav_count', __('Fav count'))->default(1);
         $form->switch('inactive', __('Inactive'));
 
-        $form->hasMany('images', 'Recipe Images', function (Form\NestedForm $form) {
-            $form->text('name', __('Name'))
+        $form->hasMany('images', 'Recipe Images', function (Form\NestedForm $imageForm) {
+            $imageForm->text('name', __('Name'))
                 ->default(Str::random(10));
-            $form->url('url', __('Url'));
-            $form->select('content_type', __('Content type'))
+            $imageForm->url('url', __('Url'));
+            $imageForm->select('content_type', __('Content type'))
                 ->options(['image' => 'Image', 'youtube' => 'Youtube'])
                 ->default('image');
-            $form->text('video_id', __('Video id'));
-            $form->url('video_url', __('Video url'));
+            $imageForm->text('video_id', __('Video id'));
+            $imageForm->url('video_url', __('Video url'));
         });
 
         return $form;

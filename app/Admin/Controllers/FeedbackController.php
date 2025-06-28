@@ -29,6 +29,8 @@ class FeedbackController extends AdminController
         $grid->model()->orderBy('id', 'desc');
         $grid->column('id', __('Id'))->sortable();
         $grid->column('user_id', __('User id'));
+        $grid->column('user.name', __('User Name'))->sortable();
+        $grid->column('user.email', __('User Email'))->sortable();
         $grid->column('post_id', __('Post id'));
         $grid->column('recipe_id', __('Recipe id'));
         $grid->column('message', __('Message'));

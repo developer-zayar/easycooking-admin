@@ -27,23 +27,27 @@ class UserController extends AdminController
         $grid = new Grid(new User());
 
         $grid->model()->orderBy('id', 'desc');
+        $grid->filter(function ($filter) {
+            $filter->like('name', __('Name'));
+            $filter->like('email', __('Email'));
+        });
         $grid->column('id', __('Id'))->sortable();
         $grid->column('name', __('Name'))->sortable();
         $grid->column('email', __('Email'))->sortable();
-        $grid->column('phone', __('Phone'));
+        $grid->column('phone', __('Phone'))->hide();
         $grid->column('image', __('Image'))->image('', 50,50);
-        $grid->column('email_verified_at', __('Email verified at'));
-        $grid->column('password', __('Password'));
-        $grid->column('otp', __('Otp'));
-        $grid->column('otp_expires_at', __('Otp expires at'));
-        $grid->column('provider', __('Provider'));
-        $grid->column('provider_id', __('Provider id'));
-        $grid->column('remember_token', __('Remember token'));
         $grid->column('device_id', __('Device id'))->sortable();
         $grid->column('device_name', __('Device name'))->sortable();
-        // $grid->column('fcm_token', __('Fcm token'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('created_at', __('Created at'))->filter('date');
+        $grid->column('updated_at', __('Updated at'))->filter('date');
+        $grid->column('email_verified_at', __('Email verified at'));
+        $grid->column('provider', __('Provider'));
+        $grid->column('provider_id', __('Provider id'));
+        $grid->column('password', __('Password'))->hide();
+        $grid->column('fcm_token', __('Fcm token'))->hide();
+        $grid->column('remember_token', __('Remember token'))->hide();
+        $grid->column('otp', __('Otp'))->hide();
+        $grid->column('otp_expires_at', __('Otp expires at'))->hide();
 
         return $grid;
     }
@@ -62,7 +66,7 @@ class UserController extends AdminController
         $show->field('name', __('Name'));
         $show->field('email', __('Email'));
         $show->field('phone', __('Phone'));
-        $show->field('image', __('Image'));
+        $show->field('image', __('Image'))->image();
         $show->field('email_verified_at', __('Email verified at'));
         $show->field('password', __('Password'));
         $show->field('otp', __('Otp'));
